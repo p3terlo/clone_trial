@@ -18,6 +18,7 @@ d3.csv('./data/constituents-financials.csv', function(d) {
     console.log('nestedCompanyBySector = ', nestedCompanyBySector);
     let treeMap = new TreeMap(d3.select('.treeMap'), nestedCompanyBySector);
 
+    let differenceChart = new DifferenceChart(d3.select(".differenceChart"), "TSLA", "GOOG");
 })
 
 // Get data in correct format for tree map (d3.hierarchy() requires certain format)
@@ -31,7 +32,7 @@ function nestData(data, sortedKeys){
         let sectorChildren = []
         for (let j = 0; j < data[i].values.length; j++) {
             let sectorChild = {};
-            
+
             for (let k = 0; k < sortedKeys.length; k++) {
                 sectorChild[sortedKeys[k]] = data[i].values[j][sortedKeys[k]]
             }
@@ -39,12 +40,9 @@ function nestData(data, sortedKeys){
         }
 
         sector.children = sectorChildren;
-        
+
         nestedData.push(sector);
     }
 
     return nestedData;
 }
-
-
-
