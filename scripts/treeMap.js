@@ -40,16 +40,8 @@ function TreeMap(svg,data){
         .attr('height', function (d) { return d.y1 - d.y0; })
         .style("stroke", "black")
         .attr('fill', function(d) { return color(d.parent.data.name); } )
-
-    // myGroup.selectAll("text")
-    //     .data(root.leaves())
-    //     .enter()
-    //     .append("text")
-    //       .attr("x", function(d){ return d.x0+5})    // +10 to adjust position (more right)
-    //       .attr("y", function(d){ return d.y0+20})    // +20 to adjust position (lower)
-    //       .text(function(d){ return d.data.name; })
-    //       .attr("font-size", "19px")
-    //       .attr("fill", "white")
+        // NATHAN: Call your parallelCoordChart with parallelCoordinatesChart(allCompInSector(d)) probably
+        .on('click', function(d){ console.log(allCompInSector(d)); })
 
     myGroup.selectAll("titles")
         .data(root.descendants().filter(function(d){return d.depth==1}))
@@ -67,4 +59,45 @@ function TreeMap(svg,data){
         .text("S&P 500 Companies by Sector")
         .attr("font-size", "19px")
         .attr("fill",  "grey" )
+
+    function allCompInSector(d) {
+        let compArr = [];
+        for (let i = 0; i < d.parent.children.length; i++) {
+            compArr.push(d.parent.children[i].data.Symbol);
+        }
+        return compArr;
+    }
+
+    // function zoom(d) {
+
+    //     console.log('clicked: ' + d.data.name + ', depth: ' + d.depth);
+        
+    //     currentDepth = d.depth;
+    //     parent.datum(d.parent || root);
+        
+    //     x.domain([d.x0, d.x1]);
+    //     y.domain([d.y0, d.y1]);
+        
+    //     let t = d3.transition()
+    //         .duration(800)
+    //         .ease(d3.easeCubicOut);
+        
+    //     cells
+    //         .transition(t)
+    //         .style("left", function(d) { return nearest(x(d.x0), snap) + "%"; })
+    //         .style("top", function(d) { return nearest(y(d.y0), snap) + "%"; })
+    //         .style("width", function(d) { return nearest(x(d.x1) - x(d.x0), snap) + "%"; })
+    //         .style("height", function(d) { return nearest(y(d.y1) - y(d.y0), snap) + "%"; });
+        
+    //     cells // hide this depth and above
+    //         .filter(function(d) { return d.ancestors(); })
+    //         .classed("hide", function(d) { return d.children ? true : false });
+        
+    //     cells // show this depth + 1 and below
+    //         .filter(function(d) { return d.depth > currentDepth; })
+    //         .classed("hide", false);
+        
+    //     // if currentDepth == 3 show prev/next buttons
+        
+    // }
 }
