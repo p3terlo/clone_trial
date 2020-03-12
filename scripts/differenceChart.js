@@ -1,7 +1,5 @@
 const apiKey = "R1TE9XCC432MADLL";
 
-
-
 function DifferenceChart(svg, ticker1, ticker2) {
   var data = {};
   var differenceArray = [];
@@ -69,7 +67,7 @@ var svg = d3.select("body").append("svg")
       }
 
       //percentages = percentages.slice(0,20);
-      console.log(percentages);
+      //console.log(percentages);
 
       percentages.forEach(function(d) {
     d.date = parseDate(d.date);
