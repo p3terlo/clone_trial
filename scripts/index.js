@@ -15,10 +15,12 @@ d3.csv('./data/constituents-financials.csv', function(d) {
         children: nestData(companyBySector, sortedKeys)
     }
 
-    console.log('nestedCompanyBySector = ', nestedCompanyBySector);
+    //console.log('nestedCompanyBySector = ', nestedCompanyBySector);
     let treeMap = new TreeMap(d3.select('.treeMap'), nestedCompanyBySector);
 
-    let differenceChart = new DifferenceChart(d3.select("#differenceChart"), "TSLA", "GOOG");
+    let differenceChart = new DifferenceChart(d3.select(".differenceChart"), "TSLA", "GOOG");
+    let companies = ['TSLA', 'GOOG']
+    let parallelcoordinateschart = new parallelCoordinatesChart(d3.select(".parallelCoordinatesChart"), companies);
 })
 
 // Get data in correct format for tree map (d3.hierarchy() requires certain format)

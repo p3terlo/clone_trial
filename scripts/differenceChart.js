@@ -66,7 +66,7 @@ function DifferenceChart(svg, ticker1, ticker2) {
       }
 
       //percentages = percentages.slice(0,20);
-      console.log(percentages);
+      //console.log(percentages);
 
       percentages.forEach(function(d) {
         d.date = parseDate(d.date);
