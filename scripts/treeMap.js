@@ -93,9 +93,12 @@ function TreeMap(svg,data){
             .append("xhtml:div")
             .attr("dy", ".75em")
             .html(function (d) {
-                return '' +
-                    '<p class="title"> ' + d.data.name + '</p>'
-                ;
+                console.log('lesgetitle d = ', d);
+                if (d.depth == 1) {
+                    return '' + '<p class="title"> ' + d.data.name + '</p>';
+                } else if (d.depth == 2) {
+                    return '' + '<p class="title"> ' + d.data['Symbol'] + '</p>';
+                }
             })
             .attr("class", "textdiv");
 
