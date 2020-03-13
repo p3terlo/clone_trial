@@ -40,8 +40,7 @@ function TreeMap(svg,data){
         .attr('height', function (d) { return d.y1 - d.y0; })
         .style("stroke", "black")
         .attr('fill', function(d) { return color(d.parent.data.name); } )
-        // NATHAN: Call your parallelCoordChart with parallelCoordinatesChart(allCompInSector(d)) probably
-        .on('click', function(d){ console.log(allCompInSector(d)); })
+        .on('click', function(d) { parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d))})
 
     myGroup.selectAll("titles")
         .data(root.descendants().filter(function(d){return d.depth==1}))

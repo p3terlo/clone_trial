@@ -8,27 +8,28 @@ var margin = {top: 30, right: 50, bottom: 10, left: 50},
 	height = 400 - margin.top - margin.bottom;
 
 function parallelCoordinatesChart(svg, companies) { 
-	data = [];
+	console.log(companies.length)
+	sectordata = [];
 	for (let i=0 ; i<companies.length ; i++) {
+		console.log(companies[i])
 		try { 
 			//'batch?types=quote,news,chart&range=1m&last=10'
 			d3.json('https://cloud.iexapis.com/stable/stock/' + companies[i] + '/book?token=pk_082890e2408448e6a98d6eb27d0d86be', function(stock) {
 				let row = {};	
-				//console.log(stock)
 				row['Stock'] = companies[i]
 				row['avgTotalVolume'] = stock['quote']['avgTotalVolume']
 				row['marketCap'] = stock['quote']['marketCap']
 				row['week52High'] = stock['quote']['week52High']
 				row['week52Low'] = stock['quote']['week52Low']
-				data.push(row)
+				sectordata.push(row)
 			})
 		} catch (e) {
 			console.log(e)
 		}
-	data['columns'] = ['Stock', 'avgTotalVolume', 'marketCap', 'week52High', 'week52Low']
+	sectordata['columns'] = ['Stock', 'avgTotalVolume', 'marketCap', 'week52High', 'week52Low']
 	}
 
-	//console.log(data)
+	console.log(sectordata)
 
 	// append the svg object to the body of the page
 	var svg = d3.select(".parallelCoordinatesChart")
@@ -41,14 +42,13 @@ function parallelCoordinatesChart(svg, companies) {
 
 	var colors = d3.scaleOrdinal(d3.schemeCategory10)
 
-  	dimensions = data['columns']
+  	dimensions = ['avgTotalVolume', 'marketCap', 'week52High', 'week52Low']
 
-  	// For each dimension, I build a linear scale. I store all in a y object
   	var y = {}
   	for (i in dimensions) {
   		name = dimensions[i]
   		y[name] = d3.scaleLinear()
-     		.domain( [d3.extent(data, function(d) { return +d[name]; })] )
+     		.domain( [d3.extent(sectordata, function(d) { return +d[name]; })] )
       		.range([height, 0])
   	}
 
@@ -58,19 +58,20 @@ function parallelCoordinatesChart(svg, companies) {
 
   	// The path function take a row of the csv as input, and return x and y coordinates of the line to draw for this raw.
   	function path(d) {
+  		console.log('line 60')
   		return d3.line()(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
   	}
-
+ 
 	// Draw the lines
-  	svg
-  	.selectAll("myPath")
-  	.data(data)
-  	.enter()
-  	.append("path")
-    	.attr("class", function (d) { return "line " + d.Stock } ) // 2 class for each line: 'line' and the group name
-    	.attr("d",  path)
+  	svg.selectAll("myPath")
+  		.data(sectordata)
+  		.enter().append("path")
+    	//.attr("class", function (d) { return "line " + d.Stock } ) // 2 class for each line: 'line' and the group name
+    	.attr("d", path)
     	.style("fill", "none" )
-    	.style("stroke", function(d){ return( color(d.Stock))} )
+    	.style("stroke", function(d) { 
+    		debugger;
+    		return (color(d.Stock) )} )
     	.style("opacity", 0.5)
     	//.on("mouseover", highlight)
     	//.on("mouseleave", doNotHighlight )

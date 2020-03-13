@@ -19,8 +19,8 @@ d3.csv('./data/constituents-financials.csv', function(d) {
     let treeMap = new TreeMap(d3.select('.treeMap'), nestedCompanyBySector);
 
     let differenceChart = new DifferenceChart(d3.select(".differenceChart"), "TSLA", "GOOG");
-    let companies = ['TSLA', 'GOOG']
-    let parallelcoordinateschart = new parallelCoordinatesChart(d3.select(".parallelCoordinatesChart"), companies);
+//    let companies = ['AAPL', 'GOOG', 'XLNX','RHT', 'TSLA','AMZN']
+//    let parallelcoordinateschart = new parallelCoordinatesChart(d3.select(".parallelCoordinatesChart"), companies);
 })
 
 // Get data in correct format for tree map (d3.hierarchy() requires certain format)
