@@ -8,78 +8,204 @@ function TreeMap(svg,data){
     let svgWidth = boundingBox.width;
     let width = svgWidth - margin.left - margin.right;
     let height = svgHeight - margin.top - margin.bottom;
-    let x = d3.scaleLinear().rangeRound([0, width]);
-    let y = d3.scaleLinear().rangeRound([0, height]);
+    let x = d3.scaleLinear().domain([0,width]).range([0,width]);
+    let y = d3.scaleLinear().domain([0,height]).range([0,height]);
     
+    let myGroup = svg
+        .attr('width', width)
+        .attr('height', height)
+        .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    // let mySvg = svg
-    //     .attr('width', width)
-    //     .attr('height', height)
+    let grandparent = svg.append("g")
+        // .attr("class", "grandparent");
+    grandparent.append("rect")
+        .attr("y", -margin.top)
+        .attr("width", width)
+        .attr("height", margin.top)
+        .attr("fill", '#bbbbbb');
+    grandparent.append("text")
+        .attr("x", 6)
+        .attr("y", 6 - margin.top)
+        .attr("dy", ".75em");
 
-    // let group = svg.append('g')
-    //     .call(render, treemap(data))
+    let root = d3.hierarchy(data).sum(function(d){
+        return d['Market Cap'];
+    });
 
-    // let nodes = d3.hierarchy(data).sum(function(d){
-    //     return d['Market Cap'];
-    // })
+    let treemap = d3.treemap()
+    .size([width,height])
+    .paddingTop(25)
+    .paddingRight(5)
+    .paddingInner(0)
+    .round(false)
+    (root)
 
-    //  let treemap = d3.treemap()
-    //     .size([width,height])
-    //     .paddingTop(25)
-    //     .paddingRight(5)
-    //     .paddingInner(0)
-    //     .tile(d3.treemapSquarify)
-    //     (nodes)
+    display(root)
 
-    // function render(group, root) {
-    //     let node = group
-    //         .selectAll("g")
-    //         .data(root.children.concat(root))
-    //         .join("g");
-    
-    //     node.filter(d => d === root ? d.parent : d.children)
-    //         .attr("cursor", "pointer")
-    //         .on("click", d => d === root ? zoomout(root) : zoomin(d));
-    
-    //     // node.append("title")
-    //     //     .text(d => d === root ? );
-    
-    //     node.append("rect")
-    //         .attr("id", d => (d.leafUid = DOM.uid("leaf")).id)
-    //         .attr("fill", d => d === root ? "#fff" : d.children ? "#ccc" : "#ddd")
-    //         .attr("stroke", "#fff");
-    
-    //     node.append("clipPath")
-    //         .attr("id", d => (d.clipUid = DOM.uid("clip")).id)
-    //         .append("use")
-    //         .attr("xlink:href", d => d.leafUid.href);
-    
-    //     node.append("text")
-    //         .attr("clip-path", d => d.clipUid)
-    //         .attr("font-weight", d => d === root ? "bold" : null)
-    //         .selectAll("tspan")
-    //         .data(d => (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g).concat(format(d.value)))
-    //         .join("tspan")
-    //         .attr("x", 3)
-    //         .attr("y", (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
-    //         .attr("fill-opacity", (d, i, nodes) => i === nodes.length - 1 ? 0.7 : null)
-    //         .attr("font-weight", (d, i, nodes) => i === nodes.length - 1 ? "normal" : null)
-    //         .text(d => d);
-    
-    //     group.call(position, root);
-    //     }
-    
-    
+    function display(d) {
+        console.log('in display function, d = ', d);
 
-    // let myGroup = svg
-    //     .attr('width', width)
-    //     .attr('height', height)
-    //     .append('g')
-    //         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        grandparent
+            .datum(d.parent)
+            .on('click', transition)
+            .select('text')
+            .text(name(d));
+        grandparent
+            .datum(d.parent)
+            .select("rect")
+            .attr("fill", function () {
+                return '#bbbbbb'
+            });
 
-    // let root = d3.hierarchy(data).sum(function(d){
-    //     return d['Market Cap'];
-    // })
+        let g1 = svg.insert("g", ".grandparent")
+            .datum(d)
+            .attr("class", "depth");
+        let g = g1.selectAll("g")
+            .data(d.children)
+            .enter().
+            append("g");
+
+        g.filter(function (d) {
+            return d.children;
+        })
+            .classed("children", true)
+            .on("click", transition);
+        g.selectAll(".child")
+            .data(function (d) {
+                return d.children || [d];
+            })
+            .enter().append("rect")
+            .attr("class", "child")
+            .call(rect);
+
+        // g.append("rect")
+        //     .attr("class", "parent")
+        //     .call(rect)
+        //     .append("title")
+        //     .text(function (d){
+        //         return d.data.name;
+        // });
+
+        g.append("foreignObject")
+            .call(rect)
+            .attr("class", "foreignobj")
+            .append("xhtml:div")
+            .attr("dy", ".75em")
+            .html(function (d) {
+                return '' +
+                    '<p class="title"> ' + d.data.name + '</p>'
+                ;
+            })
+            .attr("class", "textdiv");
+
+        function transition(d) {
+            // if (transitioning || !d) return;
+            transitioning = true;
+            var g2 = display(d),
+                t1 = g1.transition().duration(650),
+                t2 = g2.transition().duration(650);
+            // Update the domain only after entering new elements.
+            x.domain([d.x0, d.x1]);
+            y.domain([d.y0, d.y1]);
+            // Enable anti-aliasing during the transition.
+            svg.style("shape-rendering", null);
+            // Draw child nodes on top of parent nodes.
+            svg.selectAll(".depth").sort(function (a, b) {
+                return a.depth - b.depth;
+            });
+            // Fade-in entering text.
+            g2.selectAll("text").style("fill-opacity", 0);
+            g2.selectAll("foreignObject div").style("display", "none");
+            /*added*/
+            // Transition to the new view.
+            t1.selectAll("text").call(text).style("fill-opacity", 0);
+            t2.selectAll("text").call(text).style("fill-opacity", 1);
+            t1.selectAll("rect").call(rect);
+            t2.selectAll("rect").call(rect);
+            /* Foreign object */
+            t1.selectAll(".textdiv").style("display", "none");
+            /* added */
+            t1.selectAll(".foreignobj").call(foreign);
+            /* added */
+            t2.selectAll(".textdiv").style("display", "block");
+            /* added */
+            t2.selectAll(".foreignobj").call(foreign);
+            /* added */
+            // Remove the old node when the transition is finished.
+            t1.on("end.remove", function(){
+                this.remove();
+                transitioning = false;
+            });
+        }
+
+        return g;
+    }
+
+    function text(text) {
+        text.attr("x", function (d) {
+            return x(d.x) + 6;
+        })
+            .attr("y", function (d) {
+                return y(d.y) + 6;
+            });
+    }
+
+    function foreign(foreign) { /* added */
+        foreign
+            .attr("x", function (d) {
+                return x(d.x0);
+            })
+            .attr("y", function (d) {
+                return y(d.y0);
+            })
+            .attr("width", function (d) {
+                return x(d.x1) - x(d.x0);
+            })
+            .attr("height", function (d) {
+                return y(d.y1) - y(d.y0);
+            });
+    }
+
+    function rect(rect) {
+        rect
+            .attr("x", function (d) {
+                return x(d.x0);
+            })
+            .attr("y", function (d) {
+                return y(d.y0);
+            })
+            .attr("width", function (d) {
+                return x(d.x1) - x(d.x0);
+            })
+            .attr("height", function (d) {
+                return y(d.y1) - y(d.y0);
+            })
+            .attr("fill", function (d) {
+                return '#bbbbbb';
+            });
+    }
+
+    function name(d) {
+        return breadcrumbs(d) +
+            (d.parent
+            ? " (Click to zoom out)"
+            : " (Click inside square to zoom in)");
+    }
+
+    function breadcrumbs(d) {
+        var res = "";
+        var sep = " / ";
+        d.ancestors().reverse().forEach(function(i){
+            res += i.data.name + sep;
+        });
+        return res
+            .split(sep)
+            .filter(function(i){
+                return i!== "";
+            })
+            .join(sep);
+    }
     
     // d3.treemap()
     //     .size([width,height])
