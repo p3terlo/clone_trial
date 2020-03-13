@@ -2,12 +2,12 @@ function TreeMap(svg,data){
 
     this.svg = svg;
     let boundingBox = svg.node().getBoundingClientRect();
-    let margin = {top: 10, bottom: 10, left: 10, right: 10}
+    let margin = {top: 0, bottom: 10, left: 10, right: 10}
     let svgHeight = boundingBox.height;
     let svgWidth = boundingBox.width;
     let width = svgWidth - margin.left - margin.right;
     let height = svgHeight - margin.top - margin.bottom;
-    
+
 
     let myGroup = svg
         .attr('width', width)
@@ -18,7 +18,7 @@ function TreeMap(svg,data){
     let root = d3.hierarchy(data).sum(function(d){
         return d['Market Cap'];
     })
-    
+
     d3.treemap()
         .size([width,height])
         .paddingTop(25)
@@ -54,7 +54,7 @@ function TreeMap(svg,data){
 
     myGroup.append("text")
         .attr("x", width/2 - 100)
-        .attr("y", 14)    // +20 to adjust position (lower)
+        .attr("y", 25)    // +20 to adjust position (lower)
         .text("S&P 500 Companies by Sector")
         .attr("font-size", "19px")
         .attr("fill",  "grey" )
@@ -70,33 +70,33 @@ function TreeMap(svg,data){
     // function zoom(d) {
 
     //     console.log('clicked: ' + d.data.name + ', depth: ' + d.depth);
-        
+
     //     currentDepth = d.depth;
     //     parent.datum(d.parent || root);
-        
+
     //     x.domain([d.x0, d.x1]);
     //     y.domain([d.y0, d.y1]);
-        
+
     //     let t = d3.transition()
     //         .duration(800)
     //         .ease(d3.easeCubicOut);
-        
+
     //     cells
     //         .transition(t)
     //         .style("left", function(d) { return nearest(x(d.x0), snap) + "%"; })
     //         .style("top", function(d) { return nearest(y(d.y0), snap) + "%"; })
     //         .style("width", function(d) { return nearest(x(d.x1) - x(d.x0), snap) + "%"; })
     //         .style("height", function(d) { return nearest(y(d.y1) - y(d.y0), snap) + "%"; });
-        
+
     //     cells // hide this depth and above
     //         .filter(function(d) { return d.ancestors(); })
     //         .classed("hide", function(d) { return d.children ? true : false });
-        
+
     //     cells // show this depth + 1 and below
     //         .filter(function(d) { return d.depth > currentDepth; })
     //         .classed("hide", false);
-        
+
     //     // if currentDepth == 3 show prev/next buttons
-        
+
     // }
 }

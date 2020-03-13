@@ -1,14 +1,14 @@
 const apiKey = "R1TE9XCC432MADLL";
-
 var data = {};
 var differenceArray = [];
 var percentages = [];
+var expandedPercentages = [];
 
 function DifferenceChart(svg, ticker1, ticker2) {
 
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
-  width = svg.node().getBoundingClientRect().width - margin.left - margin.right,
-  height = svg.node().getBoundingClientRect().height - margin.top - margin.bottom;
+  var marginD = {top: 20, right: 20, bottom: 30, left: 50},
+  width = svg.node().getBoundingClientRect().width - marginD.left - marginD.right,
+  height = svg.node().getBoundingClientRect().height - marginD.top - marginD.bottom;
 
   var parseDate = d3.timeParse("%Y-%m-%d");
 
@@ -36,11 +36,11 @@ function DifferenceChart(svg, ticker1, ticker2) {
 
   var svg = svg
   .append("g")
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .attr("transform", "translate(" + marginD.left + "," + marginD.top + ")");
 
   // get ticker data
-  d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=compact&symbol="+ticker1+"&apikey="+apiKey, function(data1) {
-    d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=compact&symbol="+ticker2+"&apikey="+apiKey, function(data2) {
+  d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker1+"&apikey="+apiKey, function(data1) {
+    d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker2+"&apikey="+apiKey, function(data2) {
 
       var d1 = data1["Time Series (Daily)"];
       for (var d in d1) {
@@ -51,22 +51,27 @@ function DifferenceChart(svg, ticker1, ticker2) {
       var d2 = data2["Time Series (Daily)"];
       for (var d in d2) {
         var a = d2[d];
-        data[d][ticker2] = a["5. adjusted close"];
+        if (data[d])
+          data[d][ticker2] = a["5. adjusted close"];
+        else
+          data[d] = {[ticker2]: a["5. adjusted close"]};
       }
 
       for (var d in data) {
         differenceArray.push({"date": d, [ticker1]: data[d][ticker1], [ticker2]: data[d][ticker2]});
       }
 
-
       for (var i = 0; i<differenceArray.length - 1; i++) {
+        if (differenceArray[i+1][ticker1]==undefined || differenceArray[i+1][ticker2]==undefined)
+          break;
         var percent1 = (differenceArray[i][ticker1]-differenceArray[i+1][ticker1]) / differenceArray[i+1][ticker1] * 100;
         var percent2 = (differenceArray[i][ticker2]-differenceArray[i+1][ticker2]) / differenceArray[i+1][ticker2] * 100;
         percentages.push({"date": differenceArray[i].date, [ticker1]: percent1, [ticker2]: percent2});
       }
 
-      //percentages = percentages.slice(0,20);
-      //console.log(percentages);
+      expandedPercentages = percentages;
+
+      percentages = percentages.slice(0,50);
 
       percentages.forEach(function(d) {
         d.date = parseDate(d.date);
@@ -120,7 +125,7 @@ function DifferenceChart(svg, ticker1, ticker2) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Temperature (ºF)");
+      .text("Daily % Change");
     });
   });
   return;
