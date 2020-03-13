@@ -3,9 +3,9 @@ const FinnhubAPIkey = "bpkhng7rh5rcgrlrac8g";
 const IEXCloudkey = "pk_082890e2408448e6a98d6eb27d0d86be"
 
 // set the dimensions and margins of the graph
-var margin = {top: 30, right: 50, bottom: 10, left: 100},
-	width = 500 - margin.left - margin.right,
-	height = 400 - margin.top - margin.bottom;
+var margin = {top: 30, right: 50, bottom: 10, left: 100};
+	//width = svg.node().getBoundingClientRect().width - margin.left - margin.right,
+	//height = svg.node().getBoundingClientRect().width - margin.top - margin.bottom;
 
 var sectordata = [];
 
@@ -55,12 +55,12 @@ function parallelCoordinatesChart(svg, companies) {
 		//debugger;
 		// append the svg object to the body of the page
 		var svg = d3.select(".parallelCoordinatesChart")
-			//.append("svg")
-		  	.attr("width", width + margin.left + margin.right)
-		  	.attr("height", height + margin.top + margin.bottom)
 		  	.append("g")
 		  	.attr("transform",
 		  		"translate(" + margin.left + "," + margin.top + ")");
+
+		var width = d3.select(".parallelCoordinatesChart").node().getBoundingClientRect().width - margin.left - margin.right,
+		height = d3.select(".parallelCoordinatesChart").node().getBoundingClientRect().height - margin.top - margin.bottom;
 
 		var colors = d3.scaleOrdinal(d3.schemeCategory10)
 

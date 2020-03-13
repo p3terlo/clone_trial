@@ -4,8 +4,6 @@ var priceDict = {};
 
 function drawChart(ticker) {
 
-  //d3.csv("FTSE.csv", function(prices) {
-
 	d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker+"&apikey="+apiKey, function(data) {
 
     var prices = [];
@@ -32,17 +30,18 @@ function drawChart(ticker) {
 			prices[i]['Date'] = dateFormat(prices[i]['Date'])
 		}
 
-		const marginC = {top: 15, right: 65, bottom: 75, left: 200},
-		w = 1000 - marginC.left - marginC.right,
-		h = 400 - marginC.top - marginC.bottom;
+		const marginC = {top: 15, right: 65, bottom: 75, left: 50};
+		//w = svg.node().getBoundingClientRect().width - marginC.left - marginC.right,
+		//h = svg.node().getBoundingClientRect().height - marginC.top - marginC.bottom;
 
     d3.selectAll("#candlestickChart > *").remove();
 
 		var svg = d3.select("#candlestickChart")
-						.attr("width", w + marginC.left + marginC.right)
-						.attr("height", h + marginC.top + marginC.bottom)
 						.append("g")
 						.attr("transform", "translate(" +marginC.left+ "," +marginC.top+ ")");
+
+    const w = d3.select("#candlestickChart").node().getBoundingClientRect().width - marginC.left - marginC.right,
+    h = d3.select("#candlestickChart").node().getBoundingClientRect().height - marginC.top - marginC.bottom;
 
 		let dates = _.map(prices, 'Date');
 

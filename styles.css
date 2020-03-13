@@ -6,7 +6,7 @@ body {
 .topContainer{
     /*display: flex;*/
     width: 100%;
-    height: 33%;
+    height: 35%;
     position:relative;
 }
 
@@ -15,19 +15,22 @@ body {
     height: 100%;
     position:relative;
 }
-/*
+
 .parallelCoordinatesChart {
-  width: 50%;
-  height: 100%;
-}
-*/
-#differenceChart {
-  width:100%;
-  height:25%;
-  position: relative;
+  width: 49%;
+  height: 40%;
+  position:relative;
 }
 
 #candlestickChart {
+  width: 50%;
+  height: 40%;
+  position: relative;
+}
+
+#differenceChart {
+  width:100%;
+  height:24%;
   position: relative;
 }
 
