@@ -1,15 +1,20 @@
 function TreeMap(svg,data){
     console.log(data);
 
+    // Variable to keep track of which sector is selected
+    var selectedSector = null;
+    var selectedSectorColor = null;
+
     this.svg = svg;
     let boundingBox = svg.node().getBoundingClientRect();
-    let margin = {top: 10, bottom: 10, left: 10, right: 10}
+    let margin = {top: 0, bottom: 10, left: 10, right: 10}
     let svgHeight = boundingBox.height;
     let svgWidth = boundingBox.width;
     let width = svgWidth - margin.left - margin.right;
     let height = svgHeight - margin.top - margin.bottom;
     let x = d3.scaleLinear().domain([0,width]).range([0,width]);
     let y = d3.scaleLinear().domain([0,height]).range([0,height]);
+
 
     let color = d3.scaleOrdinal()
         .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])

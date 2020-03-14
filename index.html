@@ -7,23 +7,33 @@
     </head>
 
     <body>
+        <div id='myTooltip'></div>
         <div class="topContainer">
             <svg class="treeMap" />
         </div>
-        <svg class="parallelCoordinatesChart" />
-        <div class="bottomContainer">
-            <svg class="differenceChart"/>
+        <div class='middleContainer'> 
+            <input type='checkbox' id='Average_Total_Volume'>Average Total Volume
+            <input type='checkbox' id='Market_Capitalization'>Market Capitalization
+            <input type='checkbox' id='Week_52_High'>Week 52 High
+            <input type='checkbox' id='Week_52_Low'>Week 52 Low
+            <input type='checkbox' id='Percent_Change'>Percent Change
+            <input type='checkbox' id='Latest_Price'>Latest Price
+            <input type='checkbox' id='Volume'>Volume
+            <svg class="parallelCoordinatesChart" />
         </div>
-	</body>
+      <svg id="candlestickChart"/>
+      <svg id="differenceChart"/>
+  </body>
+
 
     <script src="https://d3js.org/d3-color.v1.min.js"></script>
     <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
     <script src="./scripts/d3.js"></script>
     <script src="./scripts/index.js"></script>
     <script src="./scripts/treeMap.js"></script>
-    <!-- <script src="./scripts/differenceChart.js"></script>
-    <script src="./scripts/parallelCoordinatesChart.js"></script> -->
-    <!-- <script src="./scripts/apiKeys.js"></script> -->
-    <!-- <script src="./scripts/apiCall.js"></script> -->
+    <script src="./scripts/differenceChart.js"></script>
+    <script src="./scripts/parallelCoordinatesChart.js"></script>
+    <script src="./scripts/candlestickChart.js"></script>
 </html>

@@ -1,24 +1,39 @@
 html, body {margin:0;padding:0;height:100%;}
 
-body { 
-  display: flex;
-  flex-direction: column;
+body {
+  /*display: flex;
+  flex-direction: column;*/
 }
 
 .topContainer{
-    display: flex;
+    /*display: flex;*/
     width: 100%;
-    height: 50%;
+    height: 35%;
+    position:relative;
 }
 
 .treeMap{
     width: 100%;
     height: 100%;
+    position:relative;
 }
 
-.differenceChart {
-  width: 100%;
-  height:50%;
+.parallelCoordinatesChart {
+  width: 49%;
+  height: 40%;
+  position:relative;
+}
+
+#candlestickChart {
+  width: 50%;
+  height: 40%;
+  position: relative;
+}
+
+#differenceChart {
+  width:100%;
+  height:24%;
+  position: relative;
 }
 
 .axis path,
@@ -48,10 +63,7 @@ body {
 
 
 
-
-
-
-
+/* Treemap */
 
 text {
   pointer-events: none;
@@ -101,4 +113,69 @@ rect.parent,
     margin:0 0 4px !important;
     padding:0px;
     font-size:10px !important;
+}
+
+
+
+
+/* candlestick chart */
+
+.axis text {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    fill: black;
+}
+
+.upGreenArrow{
+   width: 0;
+   height: 0;
+   border-style: solid;
+   border-width: 0 4.5px 12px 4.5px;
+   border-color: transparent transparent #00ff00 transparent;
+}
+
+.downRedArrow{
+   width: 0;
+   height: 0;
+   border-style: solid;
+   border-width: 12px 4.5px 0 4.5px;
+   border-color: #ff0000 transparent transparent transparent;
+}
+
+.upArrow{
+  position: relative;
+  top: -15px;
+  left: -10px;
+  width:0;
+  height:0;
+  border: 6px solid transparent;
+  border-bottom-color: #00ff00;
+}
+.upArrow:after{
+  position: absolute;
+  content: '';
+  top: 20px;
+  left: -3px;
+  width: 6px;
+  height: 10px;
+  background: #00ff00;
+}
+
+.downArrow{
+  position: relative;
+  top: 18px;
+  left: -10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-top-color: #ff0000;
+}
+.downArrow:after{
+  position: absolute;
+  content: '';
+  top: -15px;
+  left: -3px;
+  width: 6px;
+  height: 10px;
+  background: #ff0000;
 }
