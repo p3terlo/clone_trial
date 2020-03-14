@@ -18,8 +18,6 @@ function drawChart(ticker) {
       prices.push(priceDict[d]);
     }
 
-    console.log("check");
-
     prices = prices.reverse();
     //prices = prices.slice(0,100);
 
@@ -80,7 +78,7 @@ function drawChart(ticker) {
 		  .call(wrap, xBand.bandwidth())
 
 		var ymin = d3.min(prices.map(r => r.Low));
-    console.log(d3.min(prices, d => d.Low));
+//    console.log(d3.min(prices, d => d.Low));
     //var ymin = prices[d3.min(prices, d => d.Low)].Low;
 		var ymax = d3.max(prices.map(r => r.High));
     ymin = 50;
@@ -94,8 +92,6 @@ function drawChart(ticker) {
 		var yScale = d3.scaleLinear().domain([ymin, ymax]).range([h, 0]).nice();
 		var yAxis = d3.axisLeft()
 					  .scale(yScale)
-
-    console.log("Pleaseeee")
 
 		var gY = svg.append("g")
 					.attr("class", "axis y-axis")
