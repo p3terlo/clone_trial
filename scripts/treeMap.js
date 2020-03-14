@@ -1,5 +1,9 @@
 function TreeMap(svg,data){
 
+    // Variable to keep track of which sector is selected
+    var selectedSector = null;
+    var selectedSectorColor = null;
+
     this.svg = svg;
     let boundingBox = svg.node().getBoundingClientRect();
     let margin = {top: 0, bottom: 10, left: 10, right: 10}
@@ -40,7 +44,13 @@ function TreeMap(svg,data){
         .attr('height', function (d) { return d.y1 - d.y0; })
         .style("stroke", "black")
         .attr('fill', function(d) { return color(d.parent.data.name); } )
-        .on('click', function(d) { parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d))})
+        .on('click', function(d) { 
+            console.log(d.parent)
+            selectedSector = d.parent
+            selectedSectorColor = color(selectedSector)
+            console.log(selectedSectorColor)
+            parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+        })
 
     myGroup.selectAll("titles")
         .data(root.descendants().filter(function(d){return d.depth==1}))

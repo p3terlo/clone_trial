@@ -1,6 +1,6 @@
-const AdvantageAPIkey = "1CM19T0YJXP6L6RL";
-const FinnhubAPIkey = "bpkhng7rh5rcgrlrac8g";
-const IEXCloudkey = "pk_082890e2408448e6a98d6eb27d0d86be"
+// const AdvantageAPIkey = "1CM19T0YJXP6L6RL";
+// const FinnhubAPIkey = "bpkhng7rh5rcgrlrac8g";
+// const IEXCloudkey = "pk_082890e2408448e6a98d6eb27d0d86be"
 
 // set the dimensions and margins of the graph
 var margin = {top: 30, right: 50, bottom: 10, left: 100};
@@ -9,7 +9,8 @@ var margin = {top: 30, right: 50, bottom: 10, left: 100};
 
 var sectordata = [];
 
-function parallelCoordinatesChart(svg, companies) {
+function parallelCoordinatesChart(svg, companies, color) {
+	console.log(color)
 	function apiCall(callback) {
 		var companyString = '';
 		for (let i=0 ; i<companies.length ; i++) {
@@ -18,21 +19,19 @@ function parallelCoordinatesChart(svg, companies) {
 				d3.json('https://cloud.iexapis.com/stable/stock/' + companies[i] + '/book?token=pk_35dd1844f0ed4482a98158403e6d4900', function(stock) {
 					let row = {};
 					row['Stock'] = companies[i]
-					console.log(companies[i])
+					//console.log(companies[i])
 					row['avgTotalVolume'] = stock['quote']['avgTotalVolume']
 					row['marketCap'] = stock['quote']['marketCap']
 					row['week52High'] = stock['quote']['week52High']
 					row['week52Low'] = stock['quote']['week52Low']
 					sectordata.push(row)
-					//debugger;
 				})
 			} catch (e) {
 				console.log(e)
 			}
-			//console.log('company: ' + companies[i] + ', company + 1: ' + companies[i+1] + ', i: ' + i)
 		}
 		sectordata['columns'] = ['Stock', 'avgTotalVolume', 'marketCap', 'week52High', 'week52Low']
-		//debugger;
+
 		var i = 0
 		call()
 		function call() {
@@ -62,8 +61,6 @@ function parallelCoordinatesChart(svg, companies) {
 		var width = d3.select(".parallelCoordinatesChart").node().getBoundingClientRect().width - margin.left - margin.right,
 		height = d3.select(".parallelCoordinatesChart").node().getBoundingClientRect().height - margin.top - margin.bottom;
 
-		var colors = d3.scaleOrdinal(d3.schemeCategory10)
-
 	  	dimensions = ['avgTotalVolume', 'marketCap', 'week52High', 'week52Low']
 
 	  	var y = {}
@@ -90,7 +87,7 @@ function parallelCoordinatesChart(svg, companies) {
 	  		.enter().append('path')
 	    	.attr('d', path)
 	    	.style('fill', 'none')
-	    	.style('stroke', function(d) { return (colors(d.Stock) )} )
+	    	.style('stroke', color)
 	    	.style('opacity', 0.5)
 	    	//.on("mouseover", highlight)
 	    	//.on("mouseleave", doNotHighlight )
