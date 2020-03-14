@@ -74,7 +74,9 @@ function TreeMap(svg,data){
             return d.children;
         })
             .classed("children", true)
-            .on("click", transition);
+            .on("click", transition)
+
+
         g.selectAll(".child")
             .data(function (d) {
                 return d.children || [d];
@@ -97,17 +99,24 @@ function TreeMap(svg,data){
             .attr("class", "foreignobj")
             .append("xhtml:div")
             .html(function (d) {
-                // console.log('lesgetitle d = ', d);
                 if (d.depth == 1) {
                     return '' + '<p class="title"> ' + d.data.name + '</p>';
                 } else if (d.depth == 2) {
                     return '' + '<p class="title"> ' + d.data['Symbol'] + '</p>';
                 }
             })
-            .attr("class", "textdiv");
+            .attr("class", "textdiv")
+            // .on('click', function(d){
+            //     // Pass in RYAN'S candlestick graph here
+            //     compTicker(d);
+            // })
+            // .on('click', function(d) { 
+            //     selectedSector = (d.data)['Sector']
+            //     selectedSectorColor = color(selectedSector)
+            //     parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+            // })
 
         function transition(d) {
-            // if (transitioning || !d) return;
             transitioning = true;
             var g2 = display(d),
                 t1 = g1.transition().duration(650),
@@ -124,21 +133,15 @@ function TreeMap(svg,data){
             // Fade-in entering text.
             g2.selectAll("text").style("fill-opacity", 0);
             g2.selectAll("foreignObject div").style("display", "none");
-            /*added*/
             // Transition to the new view.
             t1.selectAll("text").call(text).style("fill-opacity", 0);
             t2.selectAll("text").call(text).style("fill-opacity", 1);
             t1.selectAll("rect").call(rect);
             t2.selectAll("rect").call(rect);
-            /* Foreign object */
             t1.selectAll(".textdiv").style("display", "none");
-            /* added */
             t1.selectAll(".foreignobj").call(foreign);
-            /* added */
             t2.selectAll(".textdiv").style("display", "block");
-            /* added */
             t2.selectAll(".foreignobj").call(foreign);
-            /* added */
             // Remove the old node when the transition is finished.
             t1.on("end.remove", function(){
                 this.remove();
@@ -158,7 +161,7 @@ function TreeMap(svg,data){
             });
     }
 
-    function foreign(foreign) { /* added */
+    function foreign(foreign) {
         foreign
             .attr("x", function (d) {
                 return x(d.x0);
@@ -196,7 +199,8 @@ function TreeMap(svg,data){
                 }
             })
             .style("stroke", "black")
-            .style('stroke-width', 1);
+            .style('stroke-width', 1)
+            // .on('click', function(){ console.log('clicked!') });
     }
 
     function name(d) {
@@ -217,52 +221,19 @@ function TreeMap(svg,data){
             .join(sep);
     }
     
-    // d3.treemap()
-    //     .size([width,height])
-    //     .paddingTop(25)
-    //     .paddingRight(5)
-    //     .paddingInner(0)
-    //     (root)
-
-    // let color = d3.scaleOrdinal()
-    //     .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
-    //     .range(d3.schemeSet3);
-
-    // myGroup.selectAll('rect')
-    //     .data(root.leaves())
-    //     .enter()
-    //     .append('rect')
-    //     .attr('x', function (d) { return d.x0; })
-    //     .attr('y', function (d) { return d.y0; })
-    //     .attr('width', function (d) { return d.x1 - d.x0; })
-    //     .attr('height', function (d) { return d.y1 - d.y0; })
-    //     .style("stroke", "black")
-    //     .attr('fill', function(d) { return color(d.parent.data.name); } )
-    //     // NATHAN: Call your parallelCoordChart with parallelCoordinatesChart(allCompInSector(d)) probably
-    //     .on('click', function(d){ console.log(allCompInSector(d)); })
-
-    // myGroup.selectAll("titles")
-    //     .data(root.descendants().filter(function(d){return d.depth==1}))
-    //     .enter()
-    //     .append("text")
-    //     .attr("x", function(d){ return d.x0})
-    //     .attr("y", function(d){ return d.y0+21})
-    //     .text(function(d){ return d.data.name })
-    //     .attr("font-size", "15px")
-    //     .attr("fill", "black")
-
-    // myGroup.append("text")
-    //     .attr("x", width/2 - 100)
-    //     .attr("y", 14)    // +20 to adjust position (lower)
-    //     .text("S&P 500 Companies by Sector")
-    //     .attr("font-size", "19px")
-    //     .attr("fill",  "grey" )
-
     function allCompInSector(d) {
-        let compArr = [];
-        for (let i = 0; i < d.parent.children.length; i++) {
-            compArr.push(d.parent.children[i].data.Symbol);
+        if (d.depth === 1) {
+            let compArr = [];
+            for (let i = 0; i < d.parent.children.length; i++) {
+                compArr.push(d.parent.children[i].data.Symbol);
+            }
+            return compArr;
         }
-        return compArr;
+    }
+
+    function compTicker(d) {
+        if (d.depth === 2) {
+            return d.data['Symbol'];
+        }
     }
 }
