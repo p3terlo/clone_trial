@@ -45,8 +45,8 @@ function TreeMap(svg,data){
         .style("stroke", "black")
         .attr('fill', function(d) { return color(d.parent.data.name); } )
         .on('click', function(d) { 
-            console.log(d.parent)
-            selectedSector = d.parent
+            console.log((d.data)['Sector'])
+            selectedSector = (d.data)['Sector']
             selectedSectorColor = color(selectedSector)
             console.log(selectedSectorColor)
             parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
