@@ -10,6 +10,9 @@ var margin = {top: 30, right: 50, bottom: 10, left: 100};
 var sectordata = [];
 
 function parallelCoordinatesChart(svg, companies, color) {
+	var firstStock = null;
+	var secondStock = null;
+	var differenceChartStocks = {};
 	function apiCall(callback) {
 		var companyString = '';
 		for (let i=0 ; i<companies.length ; i++) {
@@ -36,11 +39,11 @@ function parallelCoordinatesChart(svg, companies, color) {
 		var i = 0
 		call()
 		function call() {
-			if ((sectordata.length == companies.length) || (i > 5)) {
+			if ((sectordata.length == companies.length) || (i > 3)) {
 				draw(sectordata)
 			} else {
 				i = i+1
-				setTimeout(call, 2000)
+				setTimeout(call, 1000)
 			}
 		}
 	}
@@ -84,13 +87,10 @@ function parallelCoordinatesChart(svg, companies, color) {
 	    	.attr('d', path)
 	    	.style('fill', 'none')
 	    	.style('stroke', color)
-	    	.style('opacity', 0.5)
-	    	//.on("mouseover", highlight)
-	    	//.on("mouseleave", doNotHighlight )
+	    	.style('opacity', 0.8)
 
-	  	// Draw the axis:
+	  	// Draw the axis
 	  	svg.selectAll("myAxis")
-		    // For each dimension of the dataset I add a 'g' element:
 		    .data(dimensions).enter()
 		    .append("g")
 		    .attr("class", "axis")
@@ -101,7 +101,48 @@ function parallelCoordinatesChart(svg, companies, color) {
 		    .attr("y", -9)
 		    .text(function(d) { return d; })
 		    .style("fill", "black")
+
+		this.update = function(data) {
+			this.updatePositions = function(selection) {
+				console.log(selection)
+				selection
+					.on('mouseover', function(datum) {
+						var tooltip = d3.select('#myTooltip');
+						tooltip.style('display', 'block');
+						tooltip.style('left', d3.event.pageX + 'px');
+						tooltip.style('top', d3.event.pageY + 'px');
+						tooltip.style('position', 'absolute');
+						tooltip.html(datum.Stock);
+					})
+					.on('mousemove', function(datum) {
+						var tooltip = d3.select('#myTooltip');
+						tooltip.style('left', d3.event.pageX + 'px');
+						tooltip.style('top', d3.event.pageY + 'px');
+					})
+					.on('mouseleave', function(datum) {
+						var tooltip = d3.select('#myTooltip');
+						tooltip.style('display', 'none');
+					})
+					.on('click', function(datum) {
+						if (!firstStock) { 
+							console.log('first stock')
+							firstStock = datum.Stock;
+						} else if ((!secondStock) && (firstStock != datum.Stock )) { 
+							console.log('second stock')
+							secondStock = datum.Stock
+						}
+
+						if (firstStock && secondStock) { 
+							console.log('both, calling difference chart')
+							let differenceChart = new DifferenceChart(d3.select("#differenceChart"), firstStock, secondStock);
+						}
+					})
+				return selection;           
+			};
+			this.updatePositions(d3.select('body').select('.parallelCoordinatesChart').selectAll('path'));
+		};
+		this.update(sectordata);
 	}
+
 	apiCall(draw)
-	//console.log(sectordata)
 }
