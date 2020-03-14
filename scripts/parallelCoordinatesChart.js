@@ -1,11 +1,9 @@
-// const AdvantageAPIkey = "1CM19T0YJXP6L6RL";
-// const FinnhubAPIkey = "bpkhng7rh5rcgrlrac8g";
-// const IEXCloudkey = "pk_082890e2408448e6a98d6eb27d0d86be"
+// const AdvantageAPIkey = '1CM19T0YJXP6L6RL';
+// const FinnhubAPIkey = 'bpkhng7rh5rcgrlrac8g';
+// const IEXCloudkey = 'pk_082890e2408448e6a98d6eb27d0d86be'
 
 // set the dimensions and margins of the graph
 var margin = {top: 30, right: 50, bottom: 10, left: 100};
-	//width = svg.node().getBoundingClientRect().width - margin.left - margin.right,
-	//height = svg.node().getBoundingClientRect().width - margin.top - margin.bottom;
 
 var sectordata = [];
 
@@ -13,11 +11,38 @@ function parallelCoordinatesChart(svg, companies, color) {
 	var firstStock = null;
 	var secondStock = null;
 
+	var highlight = function(color, firstStock, secondStock){
+		d3.select('.parallelCoordinatesChart').selectAll('path')
+			.transition().duration(200)
+			.style('stroke', '#636363')
+			.style('opacity', '0.2')
+
+		if (firstStock) {		
+		    d3.selectAll('.' + firstStock)
+		    	.transition().duration(200)
+		    	.style('stroke', color)
+		    	.style('opacity', '1')
+		}
+
+	    if (secondStock) { 
+	    	d3.selectAll('.' + secondStock)
+		    	.transition().duration(200)
+		    	.style('stroke', color)
+		    	.style('opacity', '1')
+		    }
+	}
+
+	var resetHighlight = function(color){
+		d3.selectAll('path')
+			.transition().duration(200).delay(1000)
+			.style('stroke', color)
+			.style('opacity', '1')
+	}
+
 	function apiCall(callback) {
 		var companyString = '';
 		for (let i=0 ; i<companies.length ; i++) {
 			try {
-			//'batch?types=quote,news,chart&range=1m&last=10'
 				d3.json('https://cloud.iexapis.com/stable/stock/' + companies[i] + '/book?token=pk_35dd1844f0ed4482a98158403e6d4900', function(stock) {
 					let row = {};
 					row['Stock'] = companies[i]
@@ -49,25 +74,16 @@ function parallelCoordinatesChart(svg, companies, color) {
 	}
 
 	function draw(sectordata) {
-		d3.selectAll(".parallelCoordinatesChart > *").remove();
+		d3.selectAll('.parallelCoordinatesChart > *').remove();
 
 		// append the svg object to the body of the page
-		var svg = d3.select(".parallelCoordinatesChart")
-		  	.append("g")
-		  	.attr("transform",
-		  		"translate(" + margin.left + "," + margin.top + ")");
+		var svg = d3.select('.parallelCoordinatesChart')
+		  	.append('g')
+		  	.attr('transform',
+		  		'translate(' + margin.left + ',' + margin.top + ')');
 
-		var width = d3.select(".parallelCoordinatesChart").node().getBoundingClientRect().width - margin.left - margin.right,
-		height = d3.select(".parallelCoordinatesChart").node().getBoundingClientRect().height - margin.top - margin.bottom;
-
-		// Redraw if change
-		// d3.select('#Average_Total_Volume').on('change',draw)
-		// d3.select('#Market_Capitalizatio').on('change',draw)
-		// d3.select('#Week_52_High').on('change',draw)
-		// d3.select('#Week_52_Low').on('change',draw)
-		// d3.select('#Percent_Change').on('change',draw)
-		// d3.select('#Average_Total_Volume').on('change',draw)
-		// d3.select('#Average_Total_Volume').on('change',draw)
+		var width = d3.select('.parallelCoordinatesChart').node().getBoundingClientRect().width - margin.left - margin.right,
+		height = d3.select('.parallelCoordinatesChart').node().getBoundingClientRect().height - margin.top - margin.bottom;
 
 		// Choose axis based on checkboxes selected
 		var dimensions = []
@@ -92,9 +108,6 @@ function parallelCoordinatesChart(svg, companies, color) {
 		if (d3.select('#Volume').property('checked')) { 
 			dimensions.push('volume')
 		} 
-		console.log(dimensions)
-
-	  	//var dimensions = ['avgTotalVolume', 'marketCap', 'week52High', 'week52Low', 'changePercent', 'latestPrice', 'volume']
 
 	  	var y = {}
 	  	for (i in dimensions) {
@@ -118,27 +131,29 @@ function parallelCoordinatesChart(svg, companies, color) {
 	  		.append('g')
 	  		.data(sectordata)
 	  		.enter().append('path')
+	  		.attr('class', function(d) { return d.Stock})
 	    	.attr('d', path)
 	    	.style('fill', 'none')
 	    	.style('stroke', color)
 	    	.style('opacity', 0.8)
+	    	//.on('click', highlight)
+      		//.on('mouseleave', doNotHighlight )
 
 	  	// Draw the axis
-	  	svg.selectAll("myAxis")
+	  	svg.selectAll('myAxis')
 		    .data(dimensions).enter()
-		    .append("g")
-		    .attr("class", "axis")
-		    .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
+		    .append('g')
+		    .attr('class', 'axis')
+		    .attr('transform', function(d) { return 'translate(' + x(d) + ')'; })
 		    .each(function(d) { d3.select(this).call(d3.axisLeft().ticks(5).scale(y[d])); })
-		    .append("text")
-		    .style("text-anchor", "middle")
-		    .attr("y", -9)
+		    .append('text')
+		    .style('text-anchor', 'middle')
+		    .attr('y', -9)
 		    .text(function(d) { return d; })
-		    .style("fill", "black")
+		    .style('fill', 'black')
 
 		this.update = function(data) {
 			this.updatePositions = function(selection) {
-				console.log(selection)
 				selection
 					.on('mouseover', function(datum) {
 						var tooltip = d3.select('#myTooltip');
@@ -158,17 +173,22 @@ function parallelCoordinatesChart(svg, companies, color) {
 						tooltip.style('display', 'none');
 					})
 					.on('click', function(datum) {
+						if ((!firstStock) && (!secondStock)) {
+							resetHighlight(color)
+						}
+
 						if (!firstStock) { 
-							console.log('first stock')
-							firstStock = datum.Stock;
+							firstStock = datum.Stock
+							highlight(color, firstStock, secondStock)
 						} else if ((!secondStock) && (firstStock != datum.Stock )) { 
-							console.log('second stock')
 							secondStock = datum.Stock
+							highlight(color, firstStock, secondStock)
 						}
 
 						if (firstStock && secondStock) { 
-							console.log('both, calling difference chart')
-							let differenceChart = new DifferenceChart(d3.select("#differenceChart"), firstStock, secondStock);
+							DifferenceChart(d3.select('#differenceChart'), firstStock, secondStock);
+							firstStock = null;
+							secondStock = null;
 						}
 					})
 				return selection;           
