@@ -10,6 +10,10 @@ function TreeMap(svg,data){
     let height = svgHeight - margin.top - margin.bottom;
     let x = d3.scaleLinear().domain([0,width]).range([0,width]);
     let y = d3.scaleLinear().domain([0,height]).range([0,height]);
+
+    let color = d3.scaleOrdinal()
+        .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
+        .range(d3.schemeSet3);
     
     let myGroup = svg
         .attr('width', width)
@@ -17,12 +21,12 @@ function TreeMap(svg,data){
         .append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    let grandparent = svg.append("g")
-        // .attr("class", "grandparent");
+    let grandparent = myGroup.append("g")
+        .attr("class", "grandparent");
     grandparent.append("rect")
         .attr("y", -margin.top)
         .attr("width", width)
-        .attr("height", margin.top)
+        .attr("height", margin.top + 15)
         .attr("fill", '#bbbbbb');
     grandparent.append("text")
         .attr("x", 6)
@@ -34,17 +38,17 @@ function TreeMap(svg,data){
     });
 
     let treemap = d3.treemap()
-    .size([width,height])
-    .paddingTop(25)
-    .paddingRight(5)
-    .paddingInner(0)
-    .round(false)
-    (root)
+        .size([width,height])
+        .paddingTop(20)
+        .paddingRight(0)
+        .paddingInner(0)
+        .round(false)
+        (root)
 
     display(root)
 
     function display(d) {
-        console.log('in display function, d = ', d);
+        // console.log('in display function, d = ', d);
 
         grandparent
             .datum(d.parent)
@@ -58,13 +62,13 @@ function TreeMap(svg,data){
                 return '#bbbbbb'
             });
 
-        let g1 = svg.insert("g", ".grandparent")
+        let g1 = myGroup.insert("g", ".grandparent")
             .datum(d)
             .attr("class", "depth");
         let g = g1.selectAll("g")
             .data(d.children)
-            .enter().
-            append("g");
+            .enter()
+            .append("g");
 
         g.filter(function (d) {
             return d.children;
@@ -79,21 +83,21 @@ function TreeMap(svg,data){
             .attr("class", "child")
             .call(rect);
 
-        // g.append("rect")
-        //     .attr("class", "parent")
-        //     .call(rect)
-        //     .append("title")
-        //     .text(function (d){
-        //         return d.data.name;
-        // });
+        g.append("rect")
+            .attr("class", "parent")
+            .call(rect)
+            .append("title")
+            .text(function (d){
+                return d.data.name;
+        });
 
+        // Adds titles 
         g.append("foreignObject")
             .call(rect)
             .attr("class", "foreignobj")
             .append("xhtml:div")
-            .attr("dy", ".75em")
             .html(function (d) {
-                console.log('lesgetitle d = ', d);
+                // console.log('lesgetitle d = ', d);
                 if (d.depth == 1) {
                     return '' + '<p class="title"> ' + d.data.name + '</p>';
                 } else if (d.depth == 2) {
@@ -112,9 +116,9 @@ function TreeMap(svg,data){
             x.domain([d.x0, d.x1]);
             y.domain([d.y0, d.y1]);
             // Enable anti-aliasing during the transition.
-            svg.style("shape-rendering", null);
+            myGroup.style("shape-rendering", null);
             // Draw child nodes on top of parent nodes.
-            svg.selectAll(".depth").sort(function (a, b) {
+            myGroup.selectAll(".depth").sort(function (a, b) {
                 return a.depth - b.depth;
             });
             // Fade-in entering text.
@@ -147,10 +151,10 @@ function TreeMap(svg,data){
 
     function text(text) {
         text.attr("x", function (d) {
-            return x(d.x) + 6;
+            return x(d.x);
         })
             .attr("y", function (d) {
-                return y(d.y) + 6;
+                return y(d.y);
             });
     }
 
@@ -184,16 +188,19 @@ function TreeMap(svg,data){
             .attr("height", function (d) {
                 return y(d.y1) - y(d.y0);
             })
-            .attr("fill", function (d) {
-                return '#bbbbbb';
-            });
+            .attr('fill', function(d) { 
+                // console.log('fill d = ', d);
+                if (d.depth === 1) {
+                    return color(d.data.name); 
+                } else if (d.depth === 2) {
+                    return color(d.parent.data.name);
+                }
+            })
+            .style("stroke", "black");
     }
 
     function name(d) {
-        return breadcrumbs(d) +
-            (d.parent
-            ? " (Click to zoom out)"
-            : " (Click inside square to zoom in)");
+        return breadcrumbs(d);
     }
 
     function breadcrumbs(d) {

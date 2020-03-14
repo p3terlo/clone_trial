@@ -11,7 +11,7 @@ d3.csv('./data/constituents-financials.csv', function(d) {
     // console.log('sortedKeys = ', sortedKeys);
 
     let nestedCompanyBySector = {
-        name: "root",
+        name: "S&P 500 Companies",
         children: nestData(companyBySector, sortedKeys)
     }
 
