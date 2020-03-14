@@ -11,15 +11,16 @@ d3.csv('./data/constituents-financials.csv', function(d) {
     // console.log('sortedKeys = ', sortedKeys);
 
     let nestedCompanyBySector = {
-        name: "root",
+        name: "S&P 500 Companies",
         children: nestData(companyBySector, sortedKeys)
     }
 
     //console.log('nestedCompanyBySector = ', nestedCompanyBySector);
     let treeMap = new TreeMap(d3.select('.treeMap'), nestedCompanyBySector);
-
+  
     //let differenceChart = new DifferenceChart(d3.select("#differenceChart"), "AAPL", "GOOG");
     drawChart("AAPL");
+
 })
 
 // Get data in correct format for tree map (d3.hierarchy() requires certain format)
