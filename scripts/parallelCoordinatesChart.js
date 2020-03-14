@@ -12,7 +12,7 @@ var sectordata = [];
 function parallelCoordinatesChart(svg, companies, color) {
 	var firstStock = null;
 	var secondStock = null;
-	var differenceChartStocks = {};
+
 	function apiCall(callback) {
 		var companyString = '';
 		for (let i=0 ; i<companies.length ; i++) {
@@ -60,7 +60,41 @@ function parallelCoordinatesChart(svg, companies, color) {
 		var width = d3.select(".parallelCoordinatesChart").node().getBoundingClientRect().width - margin.left - margin.right,
 		height = d3.select(".parallelCoordinatesChart").node().getBoundingClientRect().height - margin.top - margin.bottom;
 
-	  	dimensions = ['avgTotalVolume', 'marketCap', 'week52High', 'week52Low', 'changePercent', 'latestPrice', 'volume']
+		// Redraw if change
+		// d3.select('#Average_Total_Volume').on('change',draw)
+		// d3.select('#Market_Capitalizatio').on('change',draw)
+		// d3.select('#Week_52_High').on('change',draw)
+		// d3.select('#Week_52_Low').on('change',draw)
+		// d3.select('#Percent_Change').on('change',draw)
+		// d3.select('#Average_Total_Volume').on('change',draw)
+		// d3.select('#Average_Total_Volume').on('change',draw)
+
+		// Choose axis based on checkboxes selected
+		var dimensions = []
+		if (d3.select('#Average_Total_Volume').property('checked')) { 
+			dimensions.push('avgTotalVolume')
+		} 
+		if (d3.select('#Market_Capitalization').property('checked')) { 
+			dimensions.push('marketCap')
+		} 
+		if (d3.select('#Week_52_High').property('checked')) { 
+			dimensions.push('week52High')
+		} 
+		if (d3.select('#Week_52_Low').property('checked')) { 
+			dimensions.push('week52Low')
+		} 
+		if (d3.select('#Percent_Change').property('checked')) { 
+			dimensions.push('changePercent')
+		} 
+		if (d3.select('#Latest_Price').property('checked')) { 
+			dimensions.push('latestPrice')
+		} 
+		if (d3.select('#Volume').property('checked')) { 
+			dimensions.push('volume')
+		} 
+		console.log(dimensions)
+
+	  	//var dimensions = ['avgTotalVolume', 'marketCap', 'week52High', 'week52Low', 'changePercent', 'latestPrice', 'volume']
 
 	  	var y = {}
 	  	for (i in dimensions) {
