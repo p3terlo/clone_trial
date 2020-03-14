@@ -189,14 +189,14 @@ function TreeMap(svg,data){
                 return y(d.y1) - y(d.y0);
             })
             .attr('fill', function(d) { 
-                // console.log('fill d = ', d);
                 if (d.depth === 1) {
                     return color(d.data.name); 
                 } else if (d.depth === 2) {
                     return color(d.parent.data.name);
                 }
             })
-            .style("stroke", "black");
+            .style("stroke", "black")
+            .style('stroke-width', 1);
     }
 
     function name(d) {
@@ -258,11 +258,11 @@ function TreeMap(svg,data){
     //     .attr("font-size", "19px")
     //     .attr("fill",  "grey" )
 
-    // function allCompInSector(d) {
-    //     let compArr = [];
-    //     for (let i = 0; i < d.parent.children.length; i++) {
-    //         compArr.push(d.parent.children[i].data.Symbol);
-    //     }
-    //     return compArr;
-    // }
+    function allCompInSector(d) {
+        let compArr = [];
+        for (let i = 0; i < d.parent.children.length; i++) {
+            compArr.push(d.parent.children[i].data.Symbol);
+        }
+        return compArr;
+    }
 }

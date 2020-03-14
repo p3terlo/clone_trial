@@ -1,3 +1,5 @@
+html, body {margin:0;padding:0;height:100%;}
+
 body { 
   display: flex;
   flex-direction: column;
@@ -57,10 +59,6 @@ text {
 .grandparent text {
   font-weight: bold;
 }
-rect {
-  stroke: #fff;
-  stroke-width: 1px;
-}
 rect.parent,
 .grandparent rect {
   stroke-width: 3px;
@@ -81,19 +79,6 @@ rect.parent,
 }
 .children:hover rect.parent {
   opacity: 0;
-}
-.legend {
-  margin-bottom:8px !important;
-}
-.legend rect {
-  stroke-width: 0px;
-}
-.legend text {
-  text-anchor: middle;
-  pointer-events: auto;
-  font-size: 13px;
-  font-family: sans-serif;
-  fill: black;
 }
 .form-group {
     text-align:left;
