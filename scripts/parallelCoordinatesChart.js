@@ -6,7 +6,6 @@ var sectordata = [];
 
 // Draw parallel coordinates graph
 function parallelCoordinatesChart(svg, companies, color) {
-	console.log('in parallelCoord, companies = ', companies);
 	var firstStock = null;
 	var secondStock = null;
 
@@ -14,35 +13,35 @@ function parallelCoordinatesChart(svg, companies, color) {
 	var highlight = function(color, firstStock, secondStock){
 		// Gray out all unselected companies
 		d3.select('.parallelCoordinatesChart').selectAll('path')
-			.transition().duration(200)
-			.style('stroke', '#636363')
-			.style('opacity', '0.3')
+		.transition().duration(200)
+		.style('stroke', '#636363')
+		.style('opacity', '0.3')
 
 		// Color first selected stock
 		if (firstStock) {
-		    d3.selectAll('.' + firstStock)
-		    	.transition().duration(200)
-		    	.style('stroke', color)
-		    	.style('opacity', '1')
-					.style('line-weight', 5);
+			d3.selectAll('.' + firstStock)
+			.transition().duration(200)
+			.style('stroke', color)
+			.style('opacity', '1')
+			.style('line-weight', 5);
 		}
 
 		// Color second selected stock
-	    if (secondStock) {
-	    	d3.selectAll('.' + secondStock)
-		    	.transition().duration(200)
-		    	.style('stroke', color)
-		    	.style('opacity', '1')
-					.style('line-weight', 5);
-		    }
+		if (secondStock) {
+			d3.selectAll('.' + secondStock)
+			.transition().duration(200)
+			.style('stroke', color)
+			.style('opacity', '1')
+			.style('line-weight', 5);
+		}
 	}
 
 	// Once two stocks are selected, unhighlight
 	var resetHighlight = function(color){
 		d3.select('.parallelCoordinatesChart').selectAll('path')
-			.transition().duration(200).delay(1000)
-			.style('stroke', color)
-			.style('opacity', '1')
+		.transition().duration(200).delay(1000)
+		.style('stroke', color)
+		.style('opacity', '1')
 	}
 
 	// Get data and format as csv
@@ -87,9 +86,9 @@ function parallelCoordinatesChart(svg, companies, color) {
 
 		// Append the svg object to the body of the page
 		var svg = d3.select('.parallelCoordinatesChart')
-		  	.append('g')
-		  	.attr('transform',
-		  		'translate(' + margin.left + ',' + margin.top + ')');
+		.append('g')
+		.attr('transform',
+			'translate(' + margin.left + ',' + margin.top + ')');
 
 		// Define width and height
 		var width = d3.select('.parallelCoordinatesChart').node().getBoundingClientRect().width - margin.left - margin.right,
@@ -119,17 +118,17 @@ function parallelCoordinatesChart(svg, companies, color) {
 			dimensions.push('volume')
 		}
 
-	  	var y = {}
-	  	for (i in dimensions) {
-	  		name = dimensions[i]
-	  		y[name] = d3.scaleLinear()
-	     		.domain(d3.extent(sectordata, function(d) { return +d[name] }) )
-	      		.range([height, 0])
-	  	}
+		var y = {}
+		for (i in dimensions) {
+			name = dimensions[i]
+			y[name] = d3.scaleLinear()
+			.domain(d3.extent(sectordata, function(d) { return +d[name] }) )
+			.range([height, 0])
+		}
 
-	  	x = d3.scalePoint()
-	  		.range([0, width])
-		  	.domain(dimensions);
+		x = d3.scalePoint()
+		.range([0, width])
+		.domain(dimensions);
 
 	  	// Return x and y coordinates of the line to draw
 	  	function path(d) {
@@ -137,84 +136,84 @@ function parallelCoordinatesChart(svg, companies, color) {
 	  	}
 
 		// Draw the lines
-	  	svg.selectAll('myPath')
-	  		.append('g')
-	  		.data(sectordata)
-	  		.enter().append('path')
-	  		.attr('class', function(d) { return d.Stock})
-	    	.attr('d', path)
-	    	.style('fill', 'none')
-	    	.style('stroke', color)
-	    	.style('opacity', 0.3)
+		svg.selectAll('myPath')
+		.append('g')
+		.data(sectordata)
+		.enter().append('path')
+		.attr('class', function(d) { return d.Stock})
+		.attr('d', path)
+		.style('fill', 'none')
+		.style('stroke', color)
+		.style('opacity', 0.3)
 
 	  	// Draw the axis
 	  	svg.selectAll('myAxis')
-		    .data(dimensions).enter()
-		    .append('g')
-		    .attr('class', 'axis')
-		    .attr('transform', function(d) { return 'translate(' + x(d) + ')'; })
-		    .each(function(d) { d3.select(this).call(d3.axisLeft().ticks(5).scale(y[d])); })
-		    .append('text')
-		    .style('text-anchor', 'middle')
-		    .attr('y', -9)
-		    .text(function(d) { return d; })
-		    .style('fill', 'black')
+	  	.data(dimensions).enter()
+	  	.append('g')
+	  	.attr('class', 'axis')
+	  	.attr('transform', function(d) { return 'translate(' + x(d) + ')'; })
+	  	.each(function(d) { d3.select(this).call(d3.axisLeft().ticks(5).scale(y[d])); })
+	  	.append('text')
+	  	.style('text-anchor', 'middle')
+	  	.attr('y', -9)
+	  	.text(function(d) { return d; })
+	  	.style('fill', 'black')
 
 		// Tooltip and clicking functionality
 		this.update = function(data) {
 			this.updatePositions = function(selection) {
 				selection
-					.on('mouseover', function(datum) {
-						var tooltip = d3.select('#myTooltip');
-						tooltip.style('display', 'block');
-						tooltip.style('left', d3.event.pageX + 'px');
-						tooltip.style('top', d3.event.pageY + 'px');
-						tooltip.style('position', 'absolute');
-						tooltip.html(datum.Stock);
+				.on('mouseover', function(datum) {
+					var tooltip = d3.select('#myTooltip');
+					tooltip.style('display', 'block');
+					tooltip.style('left', d3.event.pageX + 'px');
+					tooltip.style('top', d3.event.pageY + 'px');
+					tooltip.style('position', 'absolute');
+					tooltip.html(datum.Stock);
 
 						//hover
 						d3.select(this).style("stroke-width", 5).style("opacity", 1);
 
 						svg.selectAll(".companyData")
-				      .data(dimensions)
-				      .enter()
-				      .append("g")
-				      .classed("companyData", true)
-				      .attr("transform", function(d) { return "translate(" + x(d) + "," + (margin.top+height) +")"; })
-				      .append("text")
-				      .style("text-anchor", "middle")
-				      .text(function(d) { return datum[d]; })
-				      .style("fill", "black");
+						.data(dimensions)
+						.enter()
+						.append("g")
+						.classed("companyData", true)
+						.attr("transform", function(d) { return "translate(" + x(d) + "," + (margin.top+height) +")"; })
+						.append("text")
+						.style("text-anchor", "middle")
+						.text(function(d) { return datum[d]; })
+						.style("fill", "black");
 
 						//same tooltip as other charts
 						var xPosition = d3.event.pageX;
-	          var yPosition = d3.event.pageY;
+						var yPosition = d3.event.pageY;
 
-	          d3.select("#tooltip")
-	            .attr("x", xPosition)
-	            .attr("y", yPosition);
+						d3.select("#tooltip")
+						.attr("x", xPosition)
+						.attr("y", yPosition);
 
-	          d3.select("#Stock").text(datum.Stock);
+						d3.select("#Stock").text(datum.Stock);
 
 	          //Show the tooltip
 	          d3.select("#tooltip").classed("hidden", false);
-					})
-					.on('mousemove', function(datum) {
-						var tooltip = d3.select('#myTooltip');
-						tooltip.style('left', d3.event.pageX + 'px');
-						tooltip.style('top', d3.event.pageY + 'px');
+	      })
+				.on('mousemove', function(datum) {
+					var tooltip = d3.select('#myTooltip');
+					tooltip.style('left', d3.event.pageX + 'px');
+					tooltip.style('top', d3.event.pageY + 'px');
 
 						//same tooltip as other charts
 						var xPosition = d3.event.pageX;
-	          var yPosition = d3.event.pageY;
+						var yPosition = d3.event.pageY;
 
-	          d3.select("#tooltip")
-	            .style("left", xPosition + "px")
-	            .style("top", yPosition + "px")
+						d3.select("#tooltip")
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
 					})
-					.on('mouseleave', function(datum) {
-						var tooltip = d3.select('#myTooltip');
-						tooltip.style('display', 'none');
+				.on('mouseleave', function(datum) {
+					var tooltip = d3.select('#myTooltip');
+					tooltip.style('display', 'none');
 
 						//hover
 						if (!d3.select(this).classed("chosen"))
@@ -224,9 +223,9 @@ function parallelCoordinatesChart(svg, companies, color) {
 
 						//same tooltip as other charts
 						d3.select("#Stock").text("");
-            d3.select("#tooltip").classed("hidden", true);
+						d3.select("#tooltip").classed("hidden", true);
 					})
-					.on('click', function(datum) {
+				.on('click', function(datum) {
 						// Reset coloring if two selected
 						if ((!firstStock) && (!secondStock)) {
 							//hover
@@ -241,9 +240,9 @@ function parallelCoordinatesChart(svg, companies, color) {
 							//hover
 							d3.select(this).classed("chosen", true);
 						// Highlight second selected stock if not the same stock
-						} else if ((!secondStock) && (firstStock != datum.Stock )) {
-							secondStock = datum.Stock
-							highlight(color, firstStock, secondStock)
+					} else if ((!secondStock) && (firstStock != datum.Stock )) {
+						secondStock = datum.Stock
+						highlight(color, firstStock, secondStock)
 							//hover
 							d3.select(this).classed("chosen", true);
 						}
