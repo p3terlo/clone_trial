@@ -1,10 +1,14 @@
-const apiKey = "R1TE9XCC432MADLL";
+const apiKey1 = "R1TE9XCC432MADLL";
+const apiKey2 = "EE6IYPIJGJ2YHO3N";
+const apiKey3 = "1CM19T0YJXP6L6RL";
 var data = {};
 var differenceArray = [];
 var percentages = [];
 var expandedPercentages = [];
 
 function DifferenceChart(svg, ticker1, ticker2) {
+
+  //d3.selectAll(".differenceChart > *").remove();
 
   var marginD = {top: 20, right: 20, bottom: 30, left: 50},
   width = svg.node().getBoundingClientRect().width - marginD.left - marginD.right,
@@ -14,6 +18,9 @@ function DifferenceChart(svg, ticker1, ticker2) {
 
   var x = d3.scaleTime()
   .range([0, width]);
+
+  var xR = d3.scaleTime()
+  .domain([0, width]);
 
   var y = d3.scaleLinear()
   .range([height, 0]);
@@ -39,8 +46,8 @@ function DifferenceChart(svg, ticker1, ticker2) {
   .attr("transform", "translate(" + marginD.left + "," + marginD.top + ")");
 
   // get ticker data
-  d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker1+"&apikey="+apiKey, function(data1) {
-    d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker2+"&apikey="+apiKey, function(data2) {
+  d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker1+"&apikey="+apiKey2, function(data1) {
+    d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker2+"&apikey="+apiKey3, function(data2) {
 
       var d1 = data1["Time Series (Daily)"];
       for (var d in d1) {
@@ -80,6 +87,7 @@ function DifferenceChart(svg, ticker1, ticker2) {
       });
 
       x.domain(d3.extent(percentages, function(d) { return d.date; }));
+      xR.range(d3.extent(percentages, function(d) { return d.date; }));
 
       y.domain([
         d3.min(percentages, function(d) { return Math.min(d[ticker1], d[ticker2]); }),
@@ -101,16 +109,28 @@ function DifferenceChart(svg, ticker1, ticker2) {
       svg.append("path")
       .attr("class", "area above")
       .attr("clip-path", "url(#clip-above)")
-      .attr("d", area.y0(function(d) { return y(d[ticker2]); }));
+      .attr("d", area.y0(function(d) { return y(d[ticker2]); }))
+      .on("mouseover", function(d) {
+        var xPosition = d3.event.pageX - margin.left;
+        console.log(xR(xPosition));
+      });
+
+      
 
       svg.append("path")
       .attr("class", "area below")
       .attr("clip-path", "url(#clip-below)")
-      .attr("d", area);
+      .attr("d", area)
+      .on("mouseover", function(d) {
+        console.log(d);
+      });
 
       svg.append("path")
       .attr("class", "line")
-      .attr("d", line);
+      .attr("d", line)
+      .on("mouseover", function(d) {
+        console.log(d);
+      });
 
       svg.append("g")
       .attr("class", "x axis")

@@ -46,7 +46,7 @@ body {
 }
 
 .area.above {
-  fill: rgb(252,141,89);
+  fill: rgb(255, 0, 0);
 }
 
 .area.below {
@@ -120,4 +120,33 @@ body {
   width: 6px;
   height: 10px;
   background: #ff0000;
+}
+
+
+/* tooltip */
+#tooltip {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 10px;
+  background-color: black;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+#tooltip.hidden {
+  display: none;
+}
+
+#tooltip p {
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: white
 }
