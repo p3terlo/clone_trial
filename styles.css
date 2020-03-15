@@ -1,40 +1,55 @@
-html, body {margin:0;padding:0;height:100%;}
+/*html, body {margin:0;padding:0;height:100%;}*/
 
 body {
   /*display: flex;
   flex-direction: column;*/
 }
 
-.topContainer{
-    /*display: flex;*/
-    width: 100%;
-    height: 35%;
-    position:relative;
+div {
+  position: relative;
+  float: left;
+}
+
+svg {
+  position: relative;
+  float: left;
+}
+
+.topContainer {
+    width: 55%;
+    height: 50%;
+}
+
+.middleContainer {
+    width: 55%;
+    height: 50%;
 }
 
 .treeMap{
     width: 100%;
     height: 100%;
-    position:relative;
 }
 
 .parallelCoordinatesChart {
-  width: 80%;
-  height: 80%;
-  position:relative;
+  width: 100%;
+  height: 90%;
 }
 
 #candlestickChart {
-  width: 50%;
-  height: 40%;
+  width: 45%;
+  height: 50%;
   position: relative;
 }
 
 #differenceChart {
-  width:100%;
-  height:24%;
+  width:45%;
+  height:50%;
   position: relative;
 }
+
+
+
+/* Difference Chart */
 
 .axis path,
 .axis line {
@@ -207,4 +222,8 @@ rect.parent,
   font-size: 12px;
   line-height: 16px;
   color: white
+}
+
+#Date, #Stock {
+  font-weight: bold;
 }
