@@ -1,4 +1,5 @@
 function TreeMap(svg,data){
+    console.log(data);
 
     // Variable to keep track of which sector is selected
     var selectedSector = null;
@@ -11,100 +12,233 @@ function TreeMap(svg,data){
     let svgWidth = boundingBox.width;
     let width = svgWidth - margin.left - margin.right;
     let height = svgHeight - margin.top - margin.bottom;
+    let x = d3.scaleLinear().domain([0,width]).range([0,width]);
+    let y = d3.scaleLinear().domain([0,height]).range([0,height]);
 
 
+    let color = d3.scaleOrdinal()
+        .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
+        .range(d3.schemeSet3);
+    
     let myGroup = svg
         .attr('width', width)
         .attr('height', height)
         .append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
+    let grandparent = myGroup.append("g")
+        .attr("class", "grandparent");
+    grandparent.append("rect")
+        .attr("y", -margin.top)
+        .attr("width", width)
+        .attr("height", margin.top + 15)
+        .attr("fill", '#bbbbbb');
+    grandparent.append("text")
+        .attr("x", 6)
+        .attr("y", 6 - margin.top)
+        .attr("dy", ".75em");
+
     let root = d3.hierarchy(data).sum(function(d){
         return d['Market Cap'];
-    })
+    });
 
-    d3.treemap()
+    let treemap = d3.treemap()
         .size([width,height])
-        .paddingTop(25)
-        .paddingRight(5)
+        .paddingTop(20)
+        .paddingRight(0)
         .paddingInner(0)
+        .round(false)
         (root)
 
-    let color = d3.scaleOrdinal()
-        .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
-        .range(d3.schemeSet3);
+    display(root)
 
-    myGroup.selectAll('rect')
-        .data(root.leaves())
-        .enter()
-        .append('rect')
-        .attr('x', function (d) { return d.x0; })
-        .attr('y', function (d) { return d.y0; })
-        .attr('width', function (d) { return d.x1 - d.x0; })
-        .attr('height', function (d) { return d.y1 - d.y0; })
-        .style("stroke", "black")
-        .attr('fill', function(d) { return color(d.parent.data.name); } )
-        .on('click', function(d) { 
-            selectedSector = (d.data)['Sector']
-            selectedSectorColor = color(selectedSector)
-            parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+    function display(d) {
+        // console.log('in display function, d = ', d);
+
+        grandparent
+            .datum(d.parent)
+            .on('click', transition)
+            .select('text')
+            .text(name(d));
+        grandparent
+            .datum(d.parent)
+            .select("rect")
+            .attr("fill", function () {
+                return '#bbbbbb'
+            });
+
+        let g1 = myGroup.insert("g", ".grandparent")
+            .datum(d)
+            .attr("class", "depth");
+        let g = g1.selectAll("g")
+            .data(d.children)
+            .enter()
+            .append("g");
+
+        g.filter(function (d) {
+            return d.children;
         })
+            .classed("children", true)
+            .on("click", transition)
 
-    myGroup.selectAll("titles")
-        .data(root.descendants().filter(function(d){return d.depth==1}))
-        .enter()
-        .append("text")
-        .attr("x", function(d){ return d.x0})
-        .attr("y", function(d){ return d.y0+21})
-        .text(function(d){ return d.data.name })
-        .attr("font-size", "15px")
-        .attr("fill", "black")
 
-    myGroup.append("text")
-        .attr("x", width/2 - 100)
-        .attr("y", 25)    // +20 to adjust position (lower)
-        .text("S&P 500 Companies by Sector")
-        .attr("font-size", "19px")
-        .attr("fill",  "grey" )
+        g.selectAll(".child")
+            .data(function (d) {
+                return d.children || [d];
+            })
+            .enter().append("rect")
+            .attr("class", "child")
+            .call(rect);
 
-    function allCompInSector(d) {
-        let compArr = [];
-        for (let i = 0; i < d.parent.children.length; i++) {
-            compArr.push(d.parent.children[i].data.Symbol);
+        g.append("rect")
+            .attr("class", "parent")
+            .call(rect)
+            .append("title")
+            .text(function (d){
+                return d.data.name;
+        });
+
+        // Adds titles 
+        g.append("foreignObject")
+            .call(rect)
+            .attr("class", "foreignobj")
+            .append("xhtml:div")
+            .html(function (d) {
+                if (d.depth == 1) {
+                    return '' + '<p class="title"> ' + d.data.name + '</p>';
+                } else if (d.depth == 2) {
+                    return '' + '<p class="title"> ' + d.data['Symbol'] + '</p>';
+                }
+            })
+            .attr("class", "textdiv")
+            // .on('click', function(d){
+            //     // Pass in RYAN'S candlestick graph here
+            //     compTicker(d);
+            // })
+            // .on('click', function(d) { 
+            //     selectedSector = (d.data)['Sector']
+            //     selectedSectorColor = color(selectedSector)
+            //     parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+            // })
+
+        function transition(d) {
+            transitioning = true;
+            var g2 = display(d),
+                t1 = g1.transition().duration(650),
+                t2 = g2.transition().duration(650);
+            // Update the domain only after entering new elements.
+            x.domain([d.x0, d.x1]);
+            y.domain([d.y0, d.y1]);
+            // Enable anti-aliasing during the transition.
+            myGroup.style("shape-rendering", null);
+            // Draw child nodes on top of parent nodes.
+            myGroup.selectAll(".depth").sort(function (a, b) {
+                return a.depth - b.depth;
+            });
+            // Fade-in entering text.
+            g2.selectAll("text").style("fill-opacity", 0);
+            g2.selectAll("foreignObject div").style("display", "none");
+            // Transition to the new view.
+            t1.selectAll("text").call(text).style("fill-opacity", 0);
+            t2.selectAll("text").call(text).style("fill-opacity", 1);
+            t1.selectAll("rect").call(rect);
+            t2.selectAll("rect").call(rect);
+            t1.selectAll(".textdiv").style("display", "none");
+            t1.selectAll(".foreignobj").call(foreign);
+            t2.selectAll(".textdiv").style("display", "block");
+            t2.selectAll(".foreignobj").call(foreign);
+            // Remove the old node when the transition is finished.
+            t1.on("end.remove", function(){
+                this.remove();
+                transitioning = false;
+            });
         }
-        return compArr;
+
+        return g;
     }
 
-    // function zoom(d) {
+    function text(text) {
+        text.attr("x", function (d) {
+            return x(d.x);
+        })
+            .attr("y", function (d) {
+                return y(d.y);
+            });
+    }
 
-    //     console.log('clicked: ' + d.data.name + ', depth: ' + d.depth);
+    function foreign(foreign) {
+        foreign
+            .attr("x", function (d) {
+                return x(d.x0);
+            })
+            .attr("y", function (d) {
+                return y(d.y0);
+            })
+            .attr("width", function (d) {
+                return x(d.x1) - x(d.x0);
+            })
+            .attr("height", function (d) {
+                return y(d.y1) - y(d.y0);
+            });
+    }
 
-    //     currentDepth = d.depth;
-    //     parent.datum(d.parent || root);
+    function rect(rect) {
+        rect
+            .attr("x", function (d) {
+                return x(d.x0);
+            })
+            .attr("y", function (d) {
+                return y(d.y0);
+            })
+            .attr("width", function (d) {
+                return x(d.x1) - x(d.x0);
+            })
+            .attr("height", function (d) {
+                return y(d.y1) - y(d.y0);
+            })
+            .attr('fill', function(d) { 
+                if (d.depth === 1) {
+                    return color(d.data.name); 
+                } else if (d.depth === 2) {
+                    return color(d.parent.data.name);
+                }
+            })
+            .style("stroke", "black")
+            .style('stroke-width', 1)
+            // .on('click', function(){ console.log('clicked!') });
+    }
 
-    //     x.domain([d.x0, d.x1]);
-    //     y.domain([d.y0, d.y1]);
+    function name(d) {
+        return breadcrumbs(d);
+    }
 
-    //     let t = d3.transition()
-    //         .duration(800)
-    //         .ease(d3.easeCubicOut);
+    function breadcrumbs(d) {
+        var res = "";
+        var sep = " / ";
+        d.ancestors().reverse().forEach(function(i){
+            res += i.data.name + sep;
+        });
+        return res
+            .split(sep)
+            .filter(function(i){
+                return i!== "";
+            })
+            .join(sep);
+    }
+    
+    function allCompInSector(d) {
+        if (d.depth === 1) {
+            let compArr = [];
+            for (let i = 0; i < d.parent.children.length; i++) {
+                compArr.push(d.parent.children[i].data.Symbol);
+            }
+            return compArr;
+        }
+    }
 
-    //     cells
-    //         .transition(t)
-    //         .style("left", function(d) { return nearest(x(d.x0), snap) + "%"; })
-    //         .style("top", function(d) { return nearest(y(d.y0), snap) + "%"; })
-    //         .style("width", function(d) { return nearest(x(d.x1) - x(d.x0), snap) + "%"; })
-    //         .style("height", function(d) { return nearest(y(d.y1) - y(d.y0), snap) + "%"; });
-
-    //     cells // hide this depth and above
-    //         .filter(function(d) { return d.ancestors(); })
-    //         .classed("hide", function(d) { return d.children ? true : false });
-
-    //     cells // show this depth + 1 and below
-    //         .filter(function(d) { return d.depth > currentDepth; })
-    //         .classed("hide", false);
-
-    //     // if currentDepth == 3 show prev/next buttons
-
-    // }
+    function compTicker(d) {
+        if (d.depth === 2) {
+            return d.data['Symbol'];
+        }
+    }
 }

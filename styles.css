@@ -1,3 +1,5 @@
+html, body {margin:0;padding:0;height:100%;}
+
 body {
   /*display: flex;
   flex-direction: column;*/
@@ -17,8 +19,8 @@ body {
 }
 
 .parallelCoordinatesChart {
-  width: 49%;
-  height: 40%;
+  width: 80%;
+  height: 80%;
   position:relative;
 }
 
@@ -58,6 +60,62 @@ body {
   stroke: #000;
   stroke-width: 1.5px;
 }
+
+
+
+/* Treemap */
+
+text {
+  pointer-events: none;
+}
+.grandparent text {
+  font-weight: bold;
+}
+rect.parent,
+.grandparent rect {
+  stroke-width: 3px;
+}
+.grandparent:hover rect {
+  fill: grey;
+}
+.children rect.parent,
+.grandparent rect {
+  cursor: pointer;
+}
+.children rect.child {
+  opacity: 0;
+}
+.children:hover rect.child {
+  opacity: 1;
+  stroke-width: 1px;
+}
+.children:hover rect.parent {
+  opacity: 0;
+}
+.form-group {
+    text-align:left;
+}
+.textdiv {
+    font-family: "Open Sans",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    padding: 7px;
+    cursor: pointer;
+    overflow:none;
+}
+.textdiv .title {
+    font-size: 102%;
+    font-weight: bold;
+    margin-top: 8px;
+    font-size:11px !important;
+}
+.textdiv p{
+    line-height: 13px;
+    margin:0 0 4px !important;
+    padding:0px;
+    font-size:10px !important;
+}
+
+
 
 
 /* candlestick chart */
