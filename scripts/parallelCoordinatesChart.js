@@ -8,6 +8,7 @@ var margin = {top: 30, right: 50, bottom: 10, left: 100};
 var sectordata = [];
 
 function parallelCoordinatesChart(svg, companies, color) {
+	console.log('in parallelCoord, companies = ', companies);
 	var firstStock = null;
 	var secondStock = null;
 
