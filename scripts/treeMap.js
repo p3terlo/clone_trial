@@ -1,6 +1,4 @@
 function TreeMap(svg,data){
-    console.log(data);
-
     // Variable to keep track of which sector is selected
     var selectedSector = null;
     var selectedSectorColor = null;
@@ -122,6 +120,10 @@ function TreeMap(svg,data){
             // })
 
         function transition(d) {
+            selectedSector = (d.data)['Sector']
+            selectedSectorColor = color(selectedSector)
+            parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+
             transitioning = true;
             var g2 = display(d),
                 t1 = g1.transition().duration(650),
