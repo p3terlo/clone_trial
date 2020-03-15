@@ -4,6 +4,8 @@ var priceDict = {};
 
 function drawChart(ticker) {
 
+	console.log('in drawChart, ticker = ', ticker);
+
   d3.selectAll("#candlestickChart > *").remove();
 
 	d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker+"&apikey="+apiKey1, function(data) {

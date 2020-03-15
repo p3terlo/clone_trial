@@ -113,20 +113,16 @@ function TreeMap(svg,data){
                 if (d.depth === 1) {
                     // Call parallel coordinates here
                     console.log('onclick d = ', d);
-                    selectedSector = (d.data)['Sector']
+                    selectedSector = (d.data)['name']
                     selectedSectorColor = color(selectedSector)
                     parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
                 } else if (d.depth === 2) {
                     // Call candlestick here
-                    compTicker(d);
+                    drawChart(compTicker(d));
                 }
             });
 
         function transition(d) {
-            selectedSector = (d.data)['name']
-            selectedSectorColor = color(selectedSector)
-            parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
-
             transitioning = true;
             var g2 = display(d),
                 t1 = g1.transition().duration(650),
