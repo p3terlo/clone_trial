@@ -1,3 +1,4 @@
+
 const apiKey1 = "R1TE9XCC432MADLL";
 const apiKey2 = "EE6IYPIJGJ2YHO3N";
 const apiKey3 = "1CM19T0YJXP6L6RL";
@@ -5,12 +6,20 @@ var data = {};
 var differenceArray = [];
 var percentages = [];
 var expandedPercentages = [];
-const numDates = 100;
 var datesD = [];
+const numDates = 100;
 
 function DifferenceChart(svg, ticker1, ticker2) {
 
-  d3.selectAll('.DifferenceChart > *').remove();
+  //reset data
+  var data = {};
+  var differenceArray = [];
+  var percentages = [];
+  var expandedPercentages = [];
+  var datesD = [];
+
+
+  d3.selectAll('#DifferenceChart > *').remove();
 
   const months = {0 : 'Jan', 1 : 'Feb', 2 : 'Mar', 3 : 'Apr', 4 : 'May', 5 : 'Jun', 6 : 'Jul', 7 : 'Aug', 8 : 'Sep', 9 : 'Oct', 10 : 'Nov', 11 : 'Dec'};
 
@@ -129,7 +138,9 @@ function DifferenceChart(svg, ticker1, ticker2) {
         var xPosition = d3.event.pageX;
         var yPosition = d3.event.pageY;
 
-        var date = datesD[Math.round(xScaleR(xPosition-marginD.left))];
+        var offset = d3.select(".middleContainer").style("width").slice(0,-2);
+
+        var date = datesD[Math.round(xScaleR(xPosition-marginD.left-offset))];
 
         d3.select("#tooltip")
           .style("left", xPosition + "px")
@@ -138,8 +149,8 @@ function DifferenceChart(svg, ticker1, ticker2) {
           .attr("font-weight", "bold")
           .text(months[date.getMonth()] + ' ' + date.getDate() +' ' + date.getFullYear());
 
-        var ticker1percent = percentages[Math.round(xScaleR(xPosition-marginD.left))][ticker1];
-        var ticker2percent = percentages[Math.round(xScaleR(xPosition-marginD.left))][ticker2];
+        var ticker1percent = percentages[Math.round(xScaleR(xPosition-marginD.left-offset))][ticker1];
+        var ticker2percent = percentages[Math.round(xScaleR(xPosition-marginD.left-offset))][ticker2];
 
         d3.select("#ticker1").text(ticker1 + ": " + ticker1percent.toFixed(2) + "%");
         d3.select("#ticker2").text(ticker2 + ": " + ticker2percent.toFixed(2) + "%");
@@ -152,7 +163,9 @@ function DifferenceChart(svg, ticker1, ticker2) {
         var xPosition = d3.event.pageX;
         var yPosition = d3.event.pageY;
 
-        var date = datesD[Math.round(xScaleR(xPosition-marginD.left))];
+        var offset = d3.select(".middleContainer").style("width").slice(0,-2);
+
+        var date = datesD[Math.round(xScaleR(xPosition-marginD.left-offset))];
 
         d3.select("#tooltip")
           .style("left", xPosition + "px")
@@ -161,8 +174,8 @@ function DifferenceChart(svg, ticker1, ticker2) {
           .attr("font-weight", "bold")
           .text(months[date.getMonth()] + ' ' + date.getDate() +' ' + date.getFullYear());
 
-        var ticker1percent = percentages[Math.round(xScaleR(xPosition-marginD.left))][ticker1];
-        var ticker2percent = percentages[Math.round(xScaleR(xPosition-marginD.left))][ticker2];
+        var ticker1percent = percentages[Math.round(xScaleR(xPosition-marginD.left-offset))][ticker1];
+        var ticker2percent = percentages[Math.round(xScaleR(xPosition-marginD.left-offset))][ticker2];
 
         d3.select("#ticker1").text(ticker1 + ": " + ticker1percent.toFixed(2) + "%");
         d3.select("#ticker2").text(ticker2 + ": " + ticker2percent.toFixed(2) + "%");

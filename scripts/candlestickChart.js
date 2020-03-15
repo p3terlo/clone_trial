@@ -4,6 +4,9 @@ var priceDict = {};
 
 function drawChart(ticker) {
 
+  //reset priceDict
+  priceDict = {};
+
 	console.log('in drawChart, ticker = ', ticker);
 
   d3.selectAll("#candlestickChart > *").remove();

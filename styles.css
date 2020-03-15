@@ -1,38 +1,49 @@
-html, body {margin:0;padding:0;height:100%;}
+/*html, body {margin:0;padding:0;height:100%;}*/
 
 body {
   /*display: flex;
   flex-direction: column;*/
 }
 
-.topContainer{
-    /*display: flex;*/
-    width: 100%;
-    height: 35%;
-    position:relative;
+div {
+  position: relative;
+  float: left;
+}
+
+svg {
+  position: relative;
+  float: left;
+}
+
+.topContainer {
+    width: 55%;
+    height: 50%;
+}
+
+.middleContainer {
+    width: 55%;
+    height: 50%;
 }
 
 .treeMap{
     width: 100%;
     height: 100%;
-    position:relative;
 }
 
 .parallelCoordinatesChart {
-  width: 80%;
+  width: 100%;
   height: 80%;
-  position:relative;
 }
 
 #candlestickChart {
-  width: 35%;
-  height: 40%;
+  width: 45%;
+  height: 50%;
   position: relative;
 }
 
 #differenceChart {
-  width:100%;
-  height:25%;
+  width:45%;
+  height:50%;
   position: relative;
 }
 

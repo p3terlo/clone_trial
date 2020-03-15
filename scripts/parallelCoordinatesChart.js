@@ -129,7 +129,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 	  		.range([0, width])
 		  	.domain(dimensions);
 
-	  	// Return x and y coordinates of the line to draw 
+	  	// Return x and y coordinates of the line to draw
 	  	function path(d) {
 	  		return d3.line()(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
 	  	}
@@ -185,7 +185,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 							resetHighlight(color)
 						}
 
-						// Highlight first selected stock 
+						// Highlight first selected stock
 						if (!firstStock) {
 							firstStock = datum.Stock
 							highlight(color, firstStock, secondStock)
