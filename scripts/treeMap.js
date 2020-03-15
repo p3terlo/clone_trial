@@ -109,16 +109,18 @@ function TreeMap(svg,data){
                 }
             })
             .attr("class", "textdiv")
-            .on('click', function(d){
-                // Pass in RYAN'S candlestick graph here
-                compTicker(d);
-            })
-            .on('click', function(d) { 
-                console.log('onclick d = ', d);
-                selectedSector = (d.data)['Sector']
-                selectedSectorColor = color(selectedSector)
-                parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
-            })
+            .on('click', function(d) {
+                if (d.depth === 1) {
+                    // Call parallel coordinates here
+                    console.log('onclick d = ', d);
+                    selectedSector = (d.data)['Sector']
+                    selectedSectorColor = color(selectedSector)
+                    parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+                } else if (d.depth === 2) {
+                    // Call candlestick here
+                    compTicker(d);
+                }
+            });
 
         function transition(d) {
             selectedSector = (d.data)['Sector']
