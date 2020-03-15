@@ -14,7 +14,7 @@ function DifferenceChart(svg, ticker1, ticker2) {
 
   const months = {0 : 'Jan', 1 : 'Feb', 2 : 'Mar', 3 : 'Apr', 4 : 'May', 5 : 'Jun', 6 : 'Jul', 7 : 'Aug', 8 : 'Sep', 9 : 'Oct', 10 : 'Nov', 11 : 'Dec'};
 
-  var marginD = {top: 20, right: 50, bottom: 30, left: 50},
+  var marginD = {top: 25, right: 50, bottom: 30, left: 50},
   width = svg.node().getBoundingClientRect().width - marginD.left - marginD.right,
   height = svg.node().getBoundingClientRect().height - marginD.top - marginD.bottom;
 
@@ -50,19 +50,26 @@ function DifferenceChart(svg, ticker1, ticker2) {
   d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker1+"&apikey="+apiKey2, function(data1) {
     d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker2+"&apikey="+apiKey3, function(data2) {
 
+      svg.append("text")
+        .attr("x", width/2)
+        .attr("y", -5)
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "middle")
+        .text(ticker1 + " vs. " + ticker2 + " Daily Percentage Change in Stock Price");
+
       var d1 = data1["Time Series (Daily)"];
       for (var d in d1) {
         var a = d1[d];
-        data[d] = {[ticker1]: a["5. adjusted close"]};
+        data[d] = {[ticker1]: parseFloat(a["5. adjusted close"])};
       }
 
       var d2 = data2["Time Series (Daily)"];
       for (var d in d2) {
         var a = d2[d];
         if (data[d])
-          data[d][ticker2] = a["5. adjusted close"];
+          data[d][ticker2] = parseFloat(a["5. adjusted close"]);
         else
-          data[d] = {[ticker2]: a["5. adjusted close"]};
+          data[d] = {[ticker2]: parseFloat(a["5. adjusted close"])};
       }
 
       for (var d in data) {

@@ -13,7 +13,12 @@ function drawChart(ticker) {
     var priceData = data["Time Series (Daily)"];
     for (var d in priceData) {
       var a = priceData[d];
-      priceDict[d] = {Date: d, Open: parseInt(a["1. open"]), High: parseInt(a["2. high"]), Low: parseInt(a["3. low"]), Close: parseInt(a["4. close"])};
+      priceDict[d] = {Date: d,
+        Open: parseFloat(parseFloat(a["1. open"]).toFixed(2)),
+        High: parseFloat(parseFloat(a["2. high"]).toFixed(2)),
+        Low: parseFloat(parseFloat(a["3. low"]).toFixed(2)),
+        Close: parseFloat(parseFloat(a["4. close"]).toFixed(2))
+      };
     }
 
     for (var d in priceDict) {
@@ -30,9 +35,7 @@ function drawChart(ticker) {
 			prices[i]['Date'] = dateFormat(prices[i]['Date'])
 		}
 
-		const marginC = {top: 15, right: 65, bottom: 75, left: 50};
-		//w = svg.node().getBoundingClientRect().width - marginC.left - marginC.right,
-		//h = svg.node().getBoundingClientRect().height - marginC.top - marginC.bottom;
+		const marginC = {top: 25, right: 30, bottom: 75, left: 50};
 
     d3.selectAll("#candlestickChart > *").remove();
 
@@ -42,6 +45,13 @@ function drawChart(ticker) {
 
     const w = d3.select("#candlestickChart").node().getBoundingClientRect().width - marginC.left - marginC.right,
     h = d3.select("#candlestickChart").node().getBoundingClientRect().height - marginC.top - marginC.bottom;
+
+    svg.append("text")
+      .attr("x", w/2)
+      .attr("y", -5)
+      .attr("font-weight", "bold")
+      .attr("text-anchor", "middle")
+      .text("Daily Prices of " + ticker);
 
 		let dates = _.map(prices, 'Date');
 
@@ -107,11 +117,9 @@ function drawChart(ticker) {
           var yPosition = d3.event.pageY;
 
           d3.select("#tooltip")
-            .style("left", xPosition + "px")
-            .style("top", yPosition + "px")
+            .attr("x", xPosition)
+            .attr("y", yPosition)
             .select("#Date")
-            .attr("font-weight", "bold")
-            //.attr("fill", "rgb(0, 255, 0)")
             .text(months[d.Date.getMonth()] + ' ' + d.Date.getDate() +' ' + d.Date.getFullYear());
 
           d3.select("#Open").text("Open: $" + d.Open);
@@ -159,8 +167,6 @@ function drawChart(ticker) {
             .style("left", xPosition + "px")
             .style("top", yPosition + "px")
             .select("#Date")
-            .attr("font-weight", "bold")
-            //.attr("fill", "rgb(0, 255, 0)")
             .text(months[d.Date.getMonth()] + ' ' + d.Date.getDate() +' ' + d.Date.getFullYear());
 
           d3.select("#Open").text("Open: $" + d.Open);
