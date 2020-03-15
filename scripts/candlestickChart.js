@@ -20,8 +20,6 @@ function drawChart(ticker) {
       prices.push(priceDict[d]);
     }
 
-    console.log("check");
-
     prices = prices.slice(0,253);
     prices = prices.reverse();
 

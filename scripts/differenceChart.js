@@ -7,9 +7,6 @@ var percentages = [];
 var expandedPercentages = [];
 
 function DifferenceChart(svg, ticker1, ticker2) {
-
-  console.log('creating difference chart')
-
   d3.selectAll('.DifferenceChart > *').remove();
 
   var marginD = {top: 20, right: 20, bottom: 30, left: 50},
