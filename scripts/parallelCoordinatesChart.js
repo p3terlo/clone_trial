@@ -17,14 +17,14 @@ function parallelCoordinatesChart(svg, companies, color) {
 			.style('stroke', '#636363')
 			.style('opacity', '0.2')
 
-		if (firstStock) {		
+		if (firstStock) {
 		    d3.selectAll('.' + firstStock)
 		    	.transition().duration(200)
 		    	.style('stroke', color)
 		    	.style('opacity', '1')
 		}
 
-	    if (secondStock) { 
+	    if (secondStock) {
 	    	d3.selectAll('.' + secondStock)
 		    	.transition().duration(200)
 		    	.style('stroke', color)
@@ -87,27 +87,27 @@ function parallelCoordinatesChart(svg, companies, color) {
 
 		// Choose axis based on checkboxes selected
 		var dimensions = []
-		if (d3.select('#Average_Total_Volume').property('checked')) { 
+		if (d3.select('#Average_Total_Volume').property('checked')) {
 			dimensions.push('avgTotalVolume')
-		} 
-		if (d3.select('#Market_Capitalization').property('checked')) { 
+		}
+		if (d3.select('#Market_Capitalization').property('checked')) {
 			dimensions.push('marketCap')
-		} 
-		if (d3.select('#Week_52_High').property('checked')) { 
+		}
+		if (d3.select('#Week_52_High').property('checked')) {
 			dimensions.push('week52High')
-		} 
-		if (d3.select('#Week_52_Low').property('checked')) { 
+		}
+		if (d3.select('#Week_52_Low').property('checked')) {
 			dimensions.push('week52Low')
-		} 
-		if (d3.select('#Percent_Change').property('checked')) { 
+		}
+		if (d3.select('#Percent_Change').property('checked')) {
 			dimensions.push('changePercent')
-		} 
-		if (d3.select('#Latest_Price').property('checked')) { 
+		}
+		if (d3.select('#Latest_Price').property('checked')) {
 			dimensions.push('latestPrice')
-		} 
-		if (d3.select('#Volume').property('checked')) { 
+		}
+		if (d3.select('#Volume').property('checked')) {
 			dimensions.push('volume')
-		} 
+		}
 
 	  	var y = {}
 	  	for (i in dimensions) {
@@ -175,21 +175,21 @@ function parallelCoordinatesChart(svg, companies, color) {
 							resetHighlight(color)
 						}
 
-						if (!firstStock) { 
+						if (!firstStock) {
 							firstStock = datum.Stock
 							highlight(color, firstStock, secondStock)
-						} else if ((!secondStock) && (firstStock != datum.Stock )) { 
+						} else if ((!secondStock) && (firstStock != datum.Stock )) {
 							secondStock = datum.Stock
 							highlight(color, firstStock, secondStock)
 						}
 
-						if (firstStock && secondStock) { 
+						if (firstStock && secondStock) {
 							DifferenceChart(d3.select('#differenceChart'), firstStock, secondStock);
 							firstStock = null;
 							secondStock = null;
 						}
 					})
-				return selection;           
+				return selection;
 			};
 			this.updatePositions(d3.select('body').select('.parallelCoordinatesChart').selectAll('path'));
 		};

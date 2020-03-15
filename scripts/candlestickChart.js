@@ -4,7 +4,9 @@ var priceDict = {};
 
 function drawChart(ticker) {
 
-	d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker+"&apikey="+apiKey, function(data) {
+  d3.selectAll("#candlestickChart > *").remove();
+
+	d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker+"&apikey="+apiKey1, function(data) {
 
     var prices = [];
 
@@ -18,8 +20,10 @@ function drawChart(ticker) {
       prices.push(priceDict[d]);
     }
 
+    console.log("check");
+
+    prices = prices.slice(0,253);
     prices = prices.reverse();
-    //prices = prices.slice(0,100);
 
     const months = {0 : 'Jan', 1 : 'Feb', 2 : 'Mar', 3 : 'Apr', 4 : 'May', 5 : 'Jun', 6 : 'Jul', 7 : 'Aug', 8 : 'Sep', 9 : 'Oct', 10 : 'Nov', 11 : 'Dec'};
 
@@ -48,18 +52,18 @@ function drawChart(ticker) {
 		var xScale = d3.scaleLinear().domain([-1, dates.length])
 						.range([0, w])
 		var xDateScale = d3.scaleQuantize().domain([0, dates.length]).range(dates)
-		let xBand = d3.scaleBand().domain(d3.range(-1, dates.length)).range([0, w]).padding(0.3)
+		let xBand = d3.scaleBand().domain(d3.range(-1, dates.length)).range([0, w]).padding(0.3);
 		var xAxis = d3.axisBottom()
-					  			.scale(xScale)
-					    		.tickFormat(function(d) {
-									  d = dates[d]
-                    if(d!=undefined) {
-  										hours = d.getHours()
-  										minutes = (d.getMinutes()<10?'0':'') + d.getMinutes()
-  										amPM = hours < 13 ? 'am' : 'pm'
-  										return hours + ':' + minutes + amPM + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear()
-                    }
-									});
+			 .scale(xScale)
+       .tickFormat(function(d) {
+          d = dates[d];
+          if(d!=undefined) {
+              hours = d.getHours()
+              minutes = (d.getMinutes()<10?'0':'') + d.getMinutes()
+              amPM = hours < 13 ? 'am' : 'pm'
+              return /*hours + ':' + minutes + amPM + ' ' + */months[d.getMonth()] + ' ' + d.getDate() +' ' + d.getFullYear();
+          }
+        });
 
 		svg.append("rect")
 					.attr("id","rect")
@@ -81,14 +85,6 @@ function drawChart(ticker) {
 //    console.log(d3.min(prices, d => d.Low));
     //var ymin = prices[d3.min(prices, d => d.Low)].Low;
 		var ymax = d3.max(prices.map(r => r.High));
-    ymin = 50;
-    ymax = 150;
-    ymin = 10000;
-    ymax = 0;
-    for (stock in prices) {
-      if (prices[stock].Low<ymin) ymin = prices[stock].Low;
-      if (prices[stock].High>ymax) ymax = prices[stock].High;
-    }
 		var yScale = d3.scaleLinear().domain([ymin, ymax]).range([h, 0]).nice();
 		var yAxis = d3.axisLeft()
 					  .scale(yScale)
@@ -112,6 +108,43 @@ function drawChart(ticker) {
 		   .attr('width', xBand.bandwidth())
 		   .attr('height', d => (d.Open === d.Close) ? 1 : yScale(Math.min(d.Open, d.Close))-yScale(Math.max(d.Open, d.Close)))
 		   .attr("fill", d => (d.Open === d.Close) ? "silver" : (d.Open > d.Close) ? "red" : "green")
+       .on("mouseover", function(d) {
+            //Get this bar's x/y values, then augment for the tooltip
+          var xPosition = d3.event.pageX;
+          var yPosition = d3.event.pageY;
+
+          d3.select("#tooltip")
+            .style("left", xPosition + "px")
+            .style("top", yPosition + "px")
+            .select("#Date")
+            .attr("font-weight", "bold")
+            //.attr("fill", "rgb(0, 255, 0)")
+            .text(months[d.Date.getMonth()] + ' ' + d.Date.getDate() +' ' + d.Date.getFullYear());
+
+          d3.select("#Open").text("Open: $" + d.Open);
+          d3.select("#High").text("High: $" + d.High);
+          d3.select("#Low").text("Low: $" + d.Low);
+          d3.select("#Close").text("Close: $" + d.Close);
+
+          //Show the tooltip
+          d3.select("#tooltip").classed("hidden", false);
+       })
+       .on("mousemove", function(d) {
+          var xPosition = d3.event.pageX;
+          var yPosition = d3.event.pageY;
+
+          d3.select("#tooltip")
+            .style("left", xPosition + "px")
+            .style("top", yPosition + "px")
+       })
+       .on("mouseout", function(d) {
+            d3.select("#Date").text("");
+            d3.select("#Open").text("");
+            d3.select("#High").text("");
+            d3.select("#Low").text("");
+            d3.select("#Close").text("");
+            d3.select("#tooltip").classed("hidden", true);
+       });
 
 		// draw high and low
 		let stems = chartBody.selectAll("g.line")
@@ -123,7 +156,44 @@ function drawChart(ticker) {
 		   .attr("x2", (d, i) => xScale(i) - xBand.bandwidth()/2)
 		   .attr("y1", d => yScale(d.High))
 		   .attr("y2", d => yScale(d.Low))
-		   .attr("stroke", d => (d.Open === d.Close) ? "white" : (d.Open > d.Close) ? "red" : "green");
+		   .attr("stroke", d => (d.Open === d.Close) ? "white" : (d.Open > d.Close) ? "red" : "green")
+       .on("mouseover", function(d) {
+            //Get this bar's x/y values, then augment for the tooltip
+          var xPosition = d3.event.pageX;
+          var yPosition = d3.event.pageY;
+
+          d3.select("#tooltip")
+            .style("left", xPosition + "px")
+            .style("top", yPosition + "px")
+            .select("#Date")
+            .attr("font-weight", "bold")
+            //.attr("fill", "rgb(0, 255, 0)")
+            .text(months[d.Date.getMonth()] + ' ' + d.Date.getDate() +' ' + d.Date.getFullYear());
+
+          d3.select("#Open").text("Open: $" + d.Open);
+          d3.select("#High").text("High: $" + d.High);
+          d3.select("#Low").text("Low: $" + d.Low);
+          d3.select("#Close").text("Close: $" + d.Close);
+
+          //Show the tooltip
+          d3.select("#tooltip").classed("hidden", false);
+       })
+       .on("mousemove", function(d) {
+          var xPosition = d3.event.pageX;
+          var yPosition = d3.event.pageY;
+
+          d3.select("#tooltip")
+            .style("left", xPosition + "px")
+            .style("top", yPosition + "px")
+       })
+       .on("mouseout", function(d) {
+            d3.select("#Date").text("");
+            d3.select("#Open").text("");
+            d3.select("#High").text("");
+            d3.select("#Low").text("");
+            d3.select("#Close").text("");
+            d3.select("#tooltip").classed("hidden", true);
+       });;
 
 		svg.append("defs")
 		   .append("clipPath")
@@ -136,17 +206,24 @@ function drawChart(ticker) {
 
 		var resizeTimer;
 		var zoom = d3.zoom()
-		  .scaleExtent([1, 100])
+		  .scaleExtent([1, 35]) //controls how much you can zoom in
 		  .translateExtent(extent)
 		  .extent(extent)
 		  .on("zoom", zoomed)
 		  .on('zoom.end', zoomend);
 
-		svg.call(zoom)
+		svg.call(zoom);
 
-		function zoomed() {
+    //zoomed({k: 100, x: -71775, y: -7474});
+    //zoomend({k: 100, x: -71775, y: -7474});
 
-			var t = d3.event.transform;
+		function zoomed(a) {
+      var t = {};
+      if(a) {
+        t=a;
+      } else {
+        t = d3.event.transform;
+      }
 			let xScaleZ = t.rescaleX(xScale);
 
 			let hideTicksWithoutLabel = function() {
@@ -160,11 +237,11 @@ function drawChart(ticker) {
 			gX.call(
 				d3.axisBottom(xScaleZ).tickFormat((d, e, target) => {
 						if (d >= 0 && d <= dates.length-1) {
-					d = dates[d]
-					hours = d.getHours()
-					minutes = (d.getMinutes()<10?'0':'') + d.getMinutes()
-					amPM = hours < 13 ? 'am' : 'pm'
-					return hours + ':' + minutes + amPM + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear()
+					        d = dates[d];
+					        hours = d.getHours();
+                  minutes = (d.getMinutes()<10?'0':'') + d.getMinutes();
+                  amPM = hours < 13 ? 'am' : 'pm';
+                  return /*hours + ':' + minutes + amPM + ' ' + */d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
 					}
 				})
 			)
@@ -181,8 +258,13 @@ function drawChart(ticker) {
 
 		}
 
-		function zoomend() {
-			var t = d3.event.transform;
+		function zoomend(a) {
+      var t = {};
+      if(a) {
+        t=a;
+      } else {
+        t = d3.event.transform;
+      }
 			let xScaleZ = t.rescaleX(xScale);
 			clearTimeout(resizeTimer)
 			resizeTimer = setTimeout(function() {
