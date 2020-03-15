@@ -17,7 +17,7 @@ function TreeMap(svg,data){
     let color = d3.scaleOrdinal()
         .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
         .range(d3.schemeDark2);
-    
+
     let myGroup = svg
         .attr('width', width)
         .attr('height', height)
@@ -96,7 +96,7 @@ function TreeMap(svg,data){
                 return d.data.name;
         });
 
-        // Adds titles 
+        // Adds titles
         g.append("foreignObject")
             .call(rect)
             .attr("class", "foreignobj")
@@ -197,9 +197,9 @@ function TreeMap(svg,data){
             .attr("height", function (d) {
                 return y(d.y1) - y(d.y0);
             })
-            .attr('fill', function(d) { 
+            .attr('fill', function(d) {
                 if (d.depth === 1) {
-                    return color(d.data.name); 
+                    return color(d.data.name);
                 } else if (d.depth === 2) {
                     return color(d.parent.data.name);
                 }
@@ -225,7 +225,7 @@ function TreeMap(svg,data){
             })
             .join(sep);
     }
-    
+
     function allCompInSector(d) {
         if (d.depth === 1) {
             console.log('making compArr');

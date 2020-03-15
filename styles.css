@@ -25,14 +25,14 @@ body {
 }
 
 #candlestickChart {
-  width: 50%;
+  width: 35%;
   height: 40%;
   position: relative;
 }
 
 #differenceChart {
   width:100%;
-  height:24%;
+  height:25%;
   position: relative;
 }
 
@@ -207,4 +207,8 @@ rect.parent,
   font-size: 12px;
   line-height: 16px;
   color: white
+}
+
+#Date {
+  font-weight: bold;
 }
