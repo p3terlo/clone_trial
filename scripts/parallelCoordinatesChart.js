@@ -37,7 +37,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 
 	// Once two stocks are selected, unhighlight
 	var resetHighlight = function(color){
-		d3.selectAll('path')
+		d3.select('.parallelCoordinatesChart').selectAll('path')
 			.transition().duration(200).delay(1000)
 			.style('stroke', color)
 			.style('opacity', '1')
