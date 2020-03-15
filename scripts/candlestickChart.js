@@ -58,10 +58,7 @@ function drawChart(ticker) {
        .tickFormat(function(d) {
           d = dates[d];
           if(d!=undefined) {
-              hours = d.getHours()
-              minutes = (d.getMinutes()<10?'0':'') + d.getMinutes()
-              amPM = hours < 13 ? 'am' : 'pm'
-              return /*hours + ':' + minutes + amPM + ' ' + */months[d.getMonth()] + ' ' + d.getDate() +' ' + d.getFullYear();
+              return months[d.getMonth()] + ' ' + d.getDate() +' ' + d.getFullYear();
           }
         });
 

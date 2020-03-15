@@ -5,42 +5,43 @@ var data = {};
 var differenceArray = [];
 var percentages = [];
 var expandedPercentages = [];
+const numDates = 100;
+var datesD = [];
 
 function DifferenceChart(svg, ticker1, ticker2) {
 
-  console.log('creating difference chart')
+  console.log('creating difference chart');
 
   d3.selectAll('.DifferenceChart > *').remove();
 
-  var marginD = {top: 20, right: 20, bottom: 30, left: 50},
+  const months = {0 : 'Jan', 1 : 'Feb', 2 : 'Mar', 3 : 'Apr', 4 : 'May', 5 : 'Jun', 6 : 'Jul', 7 : 'Aug', 8 : 'Sep', 9 : 'Oct', 10 : 'Nov', 11 : 'Dec'};
+
+  var marginD = {top: 20, right: 50, bottom: 30, left: 50},
   width = svg.node().getBoundingClientRect().width - marginD.left - marginD.right,
   height = svg.node().getBoundingClientRect().height - marginD.top - marginD.bottom;
 
   var parseDate = d3.timeParse("%Y-%m-%d");
 
-  var x = d3.scaleTime()
-  .range([0, width]);
-
-  var xR = d3.scaleTime()
-  .domain([0, width]);
-
   var y = d3.scaleLinear()
   .range([height, 0]);
 
-  var xAxis = d3.axisBottom()
-  .scale(x);
+  var xScale = d3.scaleLinear().domain([0, numDates-1])
+  .range([0, width]);
+
+  var xScaleR = d3.scaleLinear().range([0, numDates-1])
+  .domain([0, width]);
 
   var yAxis = d3.axisLeft()
   .scale(y);
 
   var line = d3.area()
   .curve(d3.curveBasis)
-  .x(function(d) { return x(d.date); })
+  .x(function(d, i) { return xScale(i); })
   .y(function(d) { return y(d[ticker1]); });
 
   var area = d3.area()
   .curve(d3.curveBasis)
-  .x(function(d) { return x(d.date); })
+  .x(function(d, i) { return xScale(i); })
   .y1(function(d) { return y(d[ticker1]); });
 
   var svg = svg
@@ -80,7 +81,8 @@ function DifferenceChart(svg, ticker1, ticker2) {
 
       expandedPercentages = percentages;
 
-      percentages = percentages.slice(0,50);
+      percentages = percentages.slice(0, numDates);
+      percentages = percentages.reverse();
 
       percentages.forEach(function(d) {
         d.date = parseDate(d.date);
@@ -88,8 +90,18 @@ function DifferenceChart(svg, ticker1, ticker2) {
         d[ticker2] = +d[ticker2];
       });
 
-      x.domain(d3.extent(percentages, function(d) { return d.date; }));
-      xR.range(d3.extent(percentages, function(d) { return d.date; }));
+      let datesD = _.map(percentages, 'date');
+
+      var xAxis = d3.axisBottom()
+      .scale(xScale)
+      .tickFormat(function(d) {
+          d = datesD[d];
+          if (d!=undefined) {
+              return months[d.getMonth()] + ' ' + d.getDate() +' ' + d.getFullYear();
+          }
+      });
+
+  		var xDateScale = d3.scaleQuantize().domain([0, numDates-1]).range(datesD);
 
       y.domain([
         d3.min(percentages, function(d) { return Math.min(d[ticker1], d[ticker2]); }),
@@ -108,33 +120,83 @@ function DifferenceChart(svg, ticker1, ticker2) {
       .append("path")
       .attr("d", area.y0(0));
 
+      var mouseOver = function(d) {
+        var xPosition = d3.event.pageX;
+        var yPosition = d3.event.pageY;
+
+        var date = datesD[Math.round(xScaleR(xPosition-marginD.left))];
+
+        d3.select("#tooltip")
+          .style("left", xPosition + "px")
+          .style("top", yPosition + "px")
+          .select("#Date")
+          .attr("font-weight", "bold")
+          .text(months[date.getMonth()] + ' ' + date.getDate() +' ' + date.getFullYear());
+
+        var ticker1percent = percentages[Math.round(xScaleR(xPosition-marginD.left))][ticker1];
+        var ticker2percent = percentages[Math.round(xScaleR(xPosition-marginD.left))][ticker2];
+
+        d3.select("#ticker1").text(ticker1 + ": " + ticker1percent.toFixed(2) + "%");
+        d3.select("#ticker2").text(ticker2 + ": " + ticker2percent.toFixed(2) + "%");
+
+        //Show the tooltip
+        d3.select("#tooltip").classed("hidden", false);
+      }
+
+      var mouseMove = function(d) {
+        var xPosition = d3.event.pageX;
+        var yPosition = d3.event.pageY;
+
+        var date = datesD[Math.round(xScaleR(xPosition-marginD.left))];
+
+        d3.select("#tooltip")
+          .style("left", xPosition + "px")
+          .style("top", yPosition + "px")
+          .select("#Date")
+          .attr("font-weight", "bold")
+          .text(months[date.getMonth()] + ' ' + date.getDate() +' ' + date.getFullYear());
+
+        var ticker1percent = percentages[Math.round(xScaleR(xPosition-marginD.left))][ticker1];
+        var ticker2percent = percentages[Math.round(xScaleR(xPosition-marginD.left))][ticker2];
+
+        d3.select("#ticker1").text(ticker1 + ": " + ticker1percent.toFixed(2) + "%");
+        d3.select("#ticker2").text(ticker2 + ": " + ticker2percent.toFixed(2) + "%");
+      }
+
+      var mouseOut = function(d) {
+        d3.select("#Date").text("");
+        d3.select("#ticker1").text("");
+        d3.select("#ticker2").text("");
+
+        d3.select("#tooltip").classed("hidden", true);
+      }
+
+
       svg.append("path")
       .attr("class", "area above")
       .attr("clip-path", "url(#clip-above)")
       .attr("d", area.y0(function(d) { return y(d[ticker2]); }))
-      .on("mouseover", function(d) {
-        var xPosition = d3.event.pageX - margin.left;
-        console.log(xR(xPosition));
-      });
+      .on("mouseover", mouseOver)
+      .on("mousemove", mouseMove)
+      .on("mouseout", mouseOut);
 
-      
 
       svg.append("path")
       .attr("class", "area below")
       .attr("clip-path", "url(#clip-below)")
       .attr("d", area)
-      .on("mouseover", function(d) {
-        console.log(d);
-      });
+      .on("mouseover", mouseOver)
+      .on("mousemove", mouseMove)
+      .on("mouseout", mouseOut);
 
       svg.append("path")
       .attr("class", "line")
       .attr("d", line)
-      .on("mouseover", function(d) {
-        console.log(d);
-      });
+      .on("mouseover", mouseOver)
+      .on("mousemove", mouseMove)
+      .on("mouseout", mouseOut);
 
-      svg.append("g")
+      var gX = svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
