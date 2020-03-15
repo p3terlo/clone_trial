@@ -52,13 +52,14 @@ function parallelCoordinatesChart(svg, companies, color) {
 				d3.json('https://cloud.iexapis.com/stable/stock/' + companies[i] + '/book?token=pk_35dd1844f0ed4482a98158403e6d4900', function(stock) {
 					let row = {};
 					row['Stock'] = companies[i]
-					row['avgTotalVolume'] = stock['quote']['avgTotalVolume']
-					row['marketCap'] = stock['quote']['marketCap']
-					row['week52High'] = stock['quote']['week52High']
-					row['week52Low'] = stock['quote']['week52Low']
-					row['changePercent'] = stock['quote']['changePercent']
-					row['latestPrice'] = stock['quote']['latestPrice']
-					row['volume'] = stock['quote']['volume']
+					row['Avg Total Volume'] = stock['quote']['avgTotalVolume']
+					row['Market Cap'] = stock['quote']['marketCap']
+					row['52 Week High'] = stock['quote']['week52High']
+					row['52 Week Low'] = stock['quote']['week52Low']
+					row['Percent Change'] = stock['quote']['changePercent']
+					row['Latest Price'] = stock['quote']['latestPrice']
+					row['Volume'] = stock['quote']['volume']
+					row['P/E Ratio'] = stock['quote']['peRatio']
 					row['companyName'] = stock['quote']['companyName']
 					row['exchange'] = stock['quote']['primaryExchange']
 					sectordata.push(row)
@@ -67,7 +68,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 				console.log(e)
 			}
 		}
-		sectordata['columns'] = ['Stock', 'avgTotalVolume', 'marketCap', 'week52High', 'week52Low', 'changePercent', 'latestPrice', 'volume']
+		sectordata['columns'] = ['Stock', 'Avg Total Volume', 'Market Cap', '52 Week High', '52 Week Low', 'Percent Change', 'Latest Price', 'Volume', 'P/E Ratio']
 
 		var i = 0
 		call()
@@ -99,25 +100,28 @@ function parallelCoordinatesChart(svg, companies, color) {
 		// Choose axis to draw based on checkboxes selected
 		var dimensions = []
 		if (d3.select('#Average_Total_Volume').property('checked')) {
-			dimensions.push('avgTotalVolume')
+			dimensions.push('Avg Total Volume')
 		}
 		if (d3.select('#Market_Capitalization').property('checked')) {
-			dimensions.push('marketCap')
+			dimensions.push('Market Cap')
 		}
 		if (d3.select('#Week_52_High').property('checked')) {
-			dimensions.push('week52High')
+			dimensions.push('52 Week High')
 		}
 		if (d3.select('#Week_52_Low').property('checked')) {
-			dimensions.push('week52Low')
+			dimensions.push('52 Week Low')
 		}
 		if (d3.select('#Percent_Change').property('checked')) {
-			dimensions.push('changePercent')
+			dimensions.push('Percent Change')
 		}
 		if (d3.select('#Latest_Price').property('checked')) {
-			dimensions.push('latestPrice')
+			dimensions.push('Latest Price')
 		}
 		if (d3.select('#Volume').property('checked')) {
-			dimensions.push('volume')
+			dimensions.push('Volume')
+		}
+		if (d3.select('#PE').property('checked')) {
+			dimensions.push('P/E Ratio')
 		}
 
 		var y = {}
