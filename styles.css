@@ -110,11 +110,13 @@ rect.parent,
 .form-group {
     text-align:left;
 }
+.foreignobj {
+  cursor: pointer;
+}
 .textdiv {
     font-family: "Open Sans",Helvetica,Arial,sans-serif;
     font-size: 14px;
     padding: 7px;
-    cursor: pointer;
     overflow:none;
 }
 .textdiv .title {

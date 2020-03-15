@@ -1,4 +1,5 @@
 function TreeMap(svg,data){
+    console.log('treemap data = ', data);
     // Variable to keep track of which sector is selected
     var selectedSector = null;
     var selectedSectorColor = null;
@@ -93,7 +94,7 @@ function TreeMap(svg,data){
             })
             .enter().append("rect")
             .attr("class", "child")
-            .call(rect);
+            .call(rect)
 
         g.append("rect")
             .attr("class", "parent")
@@ -101,12 +102,58 @@ function TreeMap(svg,data){
             .append("title")
             .text(function (d){
                 return d.data.name;
-        });
+            })
 
         // Adds titles
         g.append("foreignObject")
             .call(rect)
             .attr("class", "foreignobj")
+            // On hover, show tooltip with company name and its market cap
+            .on('mouseover', function(d){
+                if (d.depth === 2) {
+                    // console.log(d3.select(this));
+                    var xPosition = d3.event.pageX;
+                    var yPosition = d3.event.pageY;
+
+                    d3.select("#tooltip")
+                        .attr("x", xPosition)
+                        .attr("y", yPosition)
+                        .select("#CompName")
+                        .text(d.data['Name'])
+                        .select("#MarketCap")
+                        .text(d.data["Market Cap"]);
+                    d3.select("#MarketCap").text("Market Cap : $" + d.data["Market Cap"]);
+                    d3.select("#tooltip").classed("hidden", false);
+
+                    // Doesn't work for some reason
+                    d3.select(this).style('stroke-width', 5);
+                }
+            })
+            .on("mousemove", function(d) {
+                var xPosition = d3.event.pageX;
+                var yPosition = d3.event.pageY;
+      
+                d3.select("#tooltip")
+                  .style("left", xPosition + "px")
+                  .style("top", yPosition + "px")
+            })
+             .on("mouseout", function(d) {
+                d3.select("#CompName").text("");
+                d3.select("#MarketCap").text("");
+                d3.select("#tooltip").classed("hidden", true);
+            })
+            // Clicking a sector passes its company to parallel coordinates and clicking a company passes its ticker (symbol) to candlestick
+            .on('click', function(d) {
+                if (d.depth === 1) {
+                    // Call parallel coordinates here
+                    selectedSector = (d.data)['name']
+                    selectedSectorColor = color(selectedSector)
+                    parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+                } else if (d.depth === 2) {
+                    // Call candlestick here
+                    drawChart(compTicker(d));
+                }
+            })
             .append("xhtml:div")
             .html(function (d) {
                 if (d.depth == 1) {
@@ -116,34 +163,30 @@ function TreeMap(svg,data){
                 }
             })
             .attr("class", "textdiv")
-            .on('click', function(d) {
-                if (d.depth === 1) {
-                    selectedSector = (d.data)['name']
-                    selectedSectorColor = color(selectedSector)
-                    parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
-                } else if (d.depth === 2) {
-                    // Call candlestick here
-                    drawChart(compTicker(d));
-                }
-            });
+            
 
         function transition(d) {
             transitioning = true;
             var g2 = display(d),
                 t1 = g1.transition().duration(650),
                 t2 = g2.transition().duration(650);
+
             // Update the domain only after entering new elements.
             x.domain([d.x0, d.x1]);
             y.domain([d.y0, d.y1]);
+
             // Enable anti-aliasing during the transition.
             myGroup.style("shape-rendering", null);
+
             // Draw child nodes on top of parent nodes.
             myGroup.selectAll(".depth").sort(function (a, b) {
                 return a.depth - b.depth;
             });
+
             // Fade-in entering text.
             g2.selectAll("text").style("fill-opacity", 0);
             g2.selectAll("foreignObject div").style("display", "none");
+
             // Transition to the new view.
             t1.selectAll("text").call(text).style("fill-opacity", 0);
             t2.selectAll("text").call(text).style("fill-opacity", 1);
@@ -153,6 +196,7 @@ function TreeMap(svg,data){
             t1.selectAll(".foreignobj").call(foreign);
             t2.selectAll(".textdiv").style("display", "block");
             t2.selectAll(".foreignobj").call(foreign);
+            
             // Remove the old node when the transition is finished.
             t1.on("end.remove", function(){
                 this.remove();
