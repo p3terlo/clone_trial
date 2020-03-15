@@ -164,13 +164,6 @@ function parallelCoordinatesChart(svg, companies, color) {
 			this.updatePositions = function(selection) {
 				selection
 				.on('mouseover', function(datum) {
-					var tooltip = d3.select('#myTooltip');
-					tooltip.style('display', 'block');
-					tooltip.style('left', d3.event.pageX + 'px');
-					tooltip.style('top', d3.event.pageY + 'px');
-					tooltip.style('position', 'absolute');
-					tooltip.html(datum.Stock);
-
 					//hover
 					d3.select(this).style("stroke-width", 5).style("opacity", 1);
 
@@ -194,15 +187,11 @@ function parallelCoordinatesChart(svg, companies, color) {
 						.attr("y", yPosition);
 
 						d3.select("#Stock").text(datum.Stock);
-	        
+
 	        		//Show the tooltip
 	        		d3.select("#tooltip").classed("hidden", false);
 	      		})
 				.on('mousemove', function(datum) {
-					var tooltip = d3.select('#myTooltip');
-					tooltip.style('left', d3.event.pageX + 'px');
-					tooltip.style('top', d3.event.pageY + 'px');
-
 						//same tooltip as other charts
 						var xPosition = d3.event.pageX;
 						var yPosition = d3.event.pageY;
@@ -212,9 +201,6 @@ function parallelCoordinatesChart(svg, companies, color) {
 						.style("top", yPosition + "px")
 				})
 				.on('mouseleave', function(datum) {
-					var tooltip = d3.select('#myTooltip');
-					tooltip.style('display', 'none');
-
 						//hover
 						if (!d3.select(this).classed("chosen"))
 							d3.select(this).style("stroke-width", 1).style("opacity", 0.3);
