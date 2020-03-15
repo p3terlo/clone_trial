@@ -15,7 +15,6 @@ d3.csv('./data/constituents-financials.csv', function(d) {
         children: nestData(companyBySector, sortedKeys)
     }
 
-    //console.log('nestedCompanyBySector = ', nestedCompanyBySector);
     let treeMap = new TreeMap(d3.select('.treeMap'), nestedCompanyBySector);
 
 
