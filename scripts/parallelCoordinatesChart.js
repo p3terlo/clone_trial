@@ -6,6 +6,7 @@ var sectordata = [];
 
 // Draw parallel coordinates graph
 function parallelCoordinatesChart(svg, companies, color) {
+	console.log('in parallelCoord, companies = ', companies);
 	var firstStock = null;
 	var secondStock = null;
 

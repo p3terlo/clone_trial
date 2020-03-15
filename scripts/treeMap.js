@@ -29,7 +29,7 @@ function TreeMap(svg,data){
     grandparent.append("rect")
         .attr("y", -margin.top)
         .attr("width", width)
-        .attr("height", margin.top + 15)
+        .attr("height", margin.top + 20)
         .attr("fill", '#bbbbbb');
     grandparent.append("text")
         .attr("x", 6)
@@ -109,15 +109,16 @@ function TreeMap(svg,data){
                 }
             })
             .attr("class", "textdiv")
-            // .on('click', function(d){
-            //     // Pass in RYAN'S candlestick graph here
-            //     compTicker(d);
-            // })
-            // .on('click', function(d) { 
-            //     selectedSector = (d.data)['Sector']
-            //     selectedSectorColor = color(selectedSector)
-            //     parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
-            // })
+            .on('click', function(d){
+                // Pass in RYAN'S candlestick graph here
+                compTicker(d);
+            })
+            .on('click', function(d) { 
+                console.log('onclick d = ', d);
+                selectedSector = (d.data)['Sector']
+                selectedSectorColor = color(selectedSector)
+                parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+            })
 
         function transition(d) {
             selectedSector = (d.data)['name']
@@ -207,7 +208,6 @@ function TreeMap(svg,data){
             })
             .style("stroke", "black")
             .style('stroke-width', 1)
-            // .on('click', function(){ console.log('clicked!') });
     }
 
     function name(d) {
@@ -230,11 +230,11 @@ function TreeMap(svg,data){
     
     function allCompInSector(d) {
         if (d.depth === 1) {
+            console.log('making compArr');
             let compArr = [];
             for (let i = 0; i < d.children.length; i++) {
                 compArr.push(d.children[i].data.Symbol);
             }
-            console.log(compArr)
             return compArr;
         }
     }
