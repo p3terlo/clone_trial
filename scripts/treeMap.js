@@ -16,7 +16,7 @@ function TreeMap(svg,data){
 
     let color = d3.scaleOrdinal()
         .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
-        .range(d3.schemeSet3);
+        .range(d3.schemeDark2);
     
     let myGroup = svg
         .attr('width', width)
@@ -120,7 +120,7 @@ function TreeMap(svg,data){
             // })
 
         function transition(d) {
-            selectedSector = (d.data)['Sector']
+            selectedSector = (d.data)['name']
             selectedSectorColor = color(selectedSector)
             parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
 
@@ -231,9 +231,10 @@ function TreeMap(svg,data){
     function allCompInSector(d) {
         if (d.depth === 1) {
             let compArr = [];
-            for (let i = 0; i < d.parent.children.length; i++) {
-                compArr.push(d.parent.children[i].data.Symbol);
+            for (let i = 0; i < d.children.length; i++) {
+                compArr.push(d.children[i].data.Symbol);
             }
+            console.log(compArr)
             return compArr;
         }
     }
