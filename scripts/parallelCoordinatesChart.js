@@ -1,5 +1,5 @@
 // Set the margins of the graph
-var margin = {top: 30, right: 50, bottom: 10, left: 100};
+var margin = {top: 30, right: 50, bottom: 40, left: 100};
 
 // Empty list to format data as csv
 var sectordata = [];
@@ -16,7 +16,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		d3.select('.parallelCoordinatesChart').selectAll('path')
 			.transition().duration(200)
 			.style('stroke', '#636363')
-			.style('opacity', '0.2')
+			.style('opacity', '0.3')
 
 		// Color first selected stock
 		if (firstStock) {
@@ -24,6 +24,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		    	.transition().duration(200)
 		    	.style('stroke', color)
 		    	.style('opacity', '1')
+					.style('line-weight', 5);
 		}
 
 		// Color second selected stock
@@ -32,6 +33,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		    	.transition().duration(200)
 		    	.style('stroke', color)
 		    	.style('opacity', '1')
+					.style('line-weight', 5);
 		    }
 	}
 
@@ -143,7 +145,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 	    	.attr('d', path)
 	    	.style('fill', 'none')
 	    	.style('stroke', color)
-	    	.style('opacity', 0.8)
+	    	.style('opacity', 0.3)
 
 	  	// Draw the axis
 	  	svg.selectAll('myAxis')
@@ -169,19 +171,66 @@ function parallelCoordinatesChart(svg, companies, color) {
 						tooltip.style('top', d3.event.pageY + 'px');
 						tooltip.style('position', 'absolute');
 						tooltip.html(datum.Stock);
+
+						//hover
+						d3.select(this).style("stroke-width", 5).style("opacity", 1);
+
+						svg.selectAll(".companyData")
+				      .data(dimensions)
+				      .enter()
+				      .append("g")
+				      .classed("companyData", true)
+				      .attr("transform", function(d) { return "translate(" + x(d) + "," + (margin.top+height) +")"; })
+				      .append("text")
+				      .style("text-anchor", "middle")
+				      .text(function(d) { return datum[d]; })
+				      .style("fill", "black");
+
+						//same tooltip as other charts
+						var xPosition = d3.event.pageX;
+	          var yPosition = d3.event.pageY;
+
+	          d3.select("#tooltip")
+	            .attr("x", xPosition)
+	            .attr("y", yPosition);
+
+	          d3.select("#Stock").text(datum.Stock);
+
+	          //Show the tooltip
+	          d3.select("#tooltip").classed("hidden", false);
 					})
 					.on('mousemove', function(datum) {
 						var tooltip = d3.select('#myTooltip');
 						tooltip.style('left', d3.event.pageX + 'px');
 						tooltip.style('top', d3.event.pageY + 'px');
+
+						//same tooltip as other charts
+						var xPosition = d3.event.pageX;
+	          var yPosition = d3.event.pageY;
+
+	          d3.select("#tooltip")
+	            .style("left", xPosition + "px")
+	            .style("top", yPosition + "px")
 					})
 					.on('mouseleave', function(datum) {
 						var tooltip = d3.select('#myTooltip');
 						tooltip.style('display', 'none');
+
+						//hover
+						if (!d3.select(this).classed("chosen"))
+							d3.select(this).style("stroke-width", 1).style("opacity", 0.3);
+
+						d3.selectAll(".companyData").remove();
+
+						//same tooltip as other charts
+						d3.select("#Stock").text("");
+            d3.select("#tooltip").classed("hidden", true);
 					})
 					.on('click', function(datum) {
 						// Reset coloring if two selected
 						if ((!firstStock) && (!secondStock)) {
+							//hover
+							d3.selectAll(".chosen").classed("chosen", false).style("stroke-width", 1).style("opacity", 0.3);
 							resetHighlight(color)
 						}
 
@@ -189,10 +238,14 @@ function parallelCoordinatesChart(svg, companies, color) {
 						if (!firstStock) {
 							firstStock = datum.Stock
 							highlight(color, firstStock, secondStock)
+							//hover
+							d3.select(this).classed("chosen", true);
 						// Highlight second selected stock if not the same stock
 						} else if ((!secondStock) && (firstStock != datum.Stock )) {
 							secondStock = datum.Stock
 							highlight(color, firstStock, secondStock)
+							//hover
+							d3.select(this).classed("chosen", true);
 						}
 
 						// Draw difference chart if two stocks selected
@@ -206,7 +259,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 					})
 				return selection;
 			};
-			this.updatePositions(d3.select('body').select('.parallelCoordinatesChart').selectAll('path'));
+			this.updatePositions(d3.select('body').select('.parallelCoordinatesChart').selectAll('path').filter(function(d) {return d!=null}));
 		};
 		this.update(sectordata);
 	}

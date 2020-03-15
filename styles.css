@@ -32,7 +32,7 @@ svg {
 
 .parallelCoordinatesChart {
   width: 100%;
-  height: 80%;
+  height: 90%;
 }
 
 #candlestickChart {
@@ -46,6 +46,10 @@ svg {
   height:50%;
   position: relative;
 }
+
+
+
+/* Difference Chart */
 
 .axis path,
 .axis line {
@@ -220,6 +224,6 @@ rect.parent,
   color: white
 }
 
-#Date {
+#Date, #Stock {
   font-weight: bold;
 }
