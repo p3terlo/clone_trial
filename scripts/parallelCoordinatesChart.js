@@ -77,7 +77,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 	function draw(sectordata) {
 		d3.selectAll('.parallelCoordinatesChart > *').remove();
 
-		// append the svg object to the body of the page
+		// Append the svg object to the body of the page
 		var svg = d3.select('.parallelCoordinatesChart')
 		  	.append('g')
 		  	.attr('transform',
@@ -137,8 +137,6 @@ function parallelCoordinatesChart(svg, companies, color) {
 	    	.style('fill', 'none')
 	    	.style('stroke', color)
 	    	.style('opacity', 0.8)
-	    	//.on('click', highlight)
-      		//.on('mouseleave', doNotHighlight )
 
 	  	// Draw the axis
 	  	svg.selectAll('myAxis')
