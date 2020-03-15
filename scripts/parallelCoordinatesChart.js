@@ -59,6 +59,8 @@ function parallelCoordinatesChart(svg, companies, color) {
 					row['changePercent'] = stock['quote']['changePercent']
 					row['latestPrice'] = stock['quote']['latestPrice']
 					row['volume'] = stock['quote']['volume']
+					row['companyName'] = stock['quote']['companyName']
+					row['exchange'] = stock['quote']['primaryExchange']
 					sectordata.push(row)
 				})
 			} catch (e) {
@@ -186,7 +188,8 @@ function parallelCoordinatesChart(svg, companies, color) {
 						.attr("x", xPosition)
 						.attr("y", yPosition);
 
-						d3.select("#Stock").text(datum.Stock);
+						d3.select("#Stock").text(datum.Stock + ": " + datum.companyName);
+						d3.select("#Exchange").text(datum.exchange);
 
 	        		//Show the tooltip
 	        		d3.select("#tooltip").classed("hidden", false);
@@ -209,6 +212,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 
 						//same tooltip as other charts
 						d3.select("#Stock").text("");
+						d3.select("#Exchange").text("");
 						d3.select("#tooltip").classed("hidden", true);
 				})
 				.on('click', function(datum) {
