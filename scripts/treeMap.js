@@ -50,6 +50,11 @@ function TreeMap(svg,data){
 
     display(root)
 
+    // Draw one sector on startup
+    selectedSector = 'Information Technology'
+    selectedSectorColor = color(selectedSector)
+    parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+
     function display(d) {
         // console.log('in display function, d = ', d);
 
