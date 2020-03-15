@@ -67,15 +67,15 @@ function parallelCoordinatesChart(svg, companies, color) {
 		}
 		sectordata['columns'] = ['Stock', 'avgTotalVolume', 'marketCap', 'week52High', 'week52Low', 'changePercent', 'latestPrice', 'volume']
 
-		// TODO: optimize speed
 		var i = 0
 		call()
 		function call() {
-			if ((sectordata.length == companies.length) || (i > 3)) {
+			if ((sectordata.length == companies.length) || (i > 2)) {
 				draw(sectordata)
 			} else {
+				console.log('waiting')
 				i = i+1
-				setTimeout(call, 1000)
+				setTimeout(call, 400)
 			}
 		}
 	}
@@ -171,10 +171,10 @@ function parallelCoordinatesChart(svg, companies, color) {
 					tooltip.style('position', 'absolute');
 					tooltip.html(datum.Stock);
 
-						//hover
-						d3.select(this).style("stroke-width", 5).style("opacity", 1);
+					//hover
+					d3.select(this).style("stroke-width", 5).style("opacity", 1);
 
-						svg.selectAll(".companyData")
+					svg.selectAll(".companyData")
 						.data(dimensions)
 						.enter()
 						.append("g")
@@ -194,10 +194,10 @@ function parallelCoordinatesChart(svg, companies, color) {
 						.attr("y", yPosition);
 
 						d3.select("#Stock").text(datum.Stock);
-
-	          //Show the tooltip
-	          d3.select("#tooltip").classed("hidden", false);
-	      })
+	        
+	        		//Show the tooltip
+	        		d3.select("#tooltip").classed("hidden", false);
+	      		})
 				.on('mousemove', function(datum) {
 					var tooltip = d3.select('#myTooltip');
 					tooltip.style('left', d3.event.pageX + 'px');
@@ -210,7 +210,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 						d3.select("#tooltip")
 						.style("left", xPosition + "px")
 						.style("top", yPosition + "px")
-					})
+				})
 				.on('mouseleave', function(datum) {
 					var tooltip = d3.select('#myTooltip');
 					tooltip.style('display', 'none');
@@ -224,7 +224,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 						//same tooltip as other charts
 						d3.select("#Stock").text("");
 						d3.select("#tooltip").classed("hidden", true);
-					})
+				})
 				.on('click', function(datum) {
 						// Reset coloring if two selected
 						if ((!firstStock) && (!secondStock)) {
@@ -255,7 +255,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 							firstStock = null;
 							secondStock = null;
 						}
-					})
+				})
 				return selection;
 			};
 			this.updatePositions(d3.select('body').select('.parallelCoordinatesChart').selectAll('path').filter(function(d) {return d!=null}));
