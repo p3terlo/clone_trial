@@ -20,8 +20,6 @@ function drawChart(ticker) {
       prices.push(priceDict[d]);
     }
 
-    console.log("check");
-
     prices = prices.slice(0,253);
     prices = prices.reverse();
 
@@ -79,8 +77,6 @@ function drawChart(ticker) {
 		  .call(wrap, xBand.bandwidth())
 
 		var ymin = d3.min(prices.map(r => r.Low));
-//    console.log(d3.min(prices, d => d.Low));
-    //var ymin = prices[d3.min(prices, d => d.Low)].Low;
 		var ymax = d3.max(prices.map(r => r.High));
 		var yScale = d3.scaleLinear().domain([ymin, ymax]).range([h, 0]).nice();
 		var yAxis = d3.axisLeft()

@@ -16,7 +16,7 @@ function TreeMap(svg,data){
 
     let color = d3.scaleOrdinal()
         .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
-        .range(d3.schemeSet3);
+        .range(d3.schemeDark2);
     
     let myGroup = svg
         .attr('width', width)
@@ -29,7 +29,7 @@ function TreeMap(svg,data){
     grandparent.append("rect")
         .attr("y", -margin.top)
         .attr("width", width)
-        .attr("height", margin.top + 15)
+        .attr("height", margin.top + 20)
         .attr("fill", '#bbbbbb');
     grandparent.append("text")
         .attr("x", 6)
@@ -109,18 +109,21 @@ function TreeMap(svg,data){
                 }
             })
             .attr("class", "textdiv")
-            // .on('click', function(d){
-            //     // Pass in RYAN'S candlestick graph here
-            //     compTicker(d);
-            // })
-            // .on('click', function(d) { 
-            //     selectedSector = (d.data)['Sector']
-            //     selectedSectorColor = color(selectedSector)
-            //     parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
-            // })
+            .on('click', function(d) {
+                if (d.depth === 1) {
+                    // Call parallel coordinates here
+                    console.log('onclick d = ', d);
+                    selectedSector = (d.data)['Sector']
+                    selectedSectorColor = color(selectedSector)
+                    parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
+                } else if (d.depth === 2) {
+                    // Call candlestick here
+                    compTicker(d);
+                }
+            });
 
         function transition(d) {
-            selectedSector = (d.data)['Sector']
+            selectedSector = (d.data)['name']
             selectedSectorColor = color(selectedSector)
             parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
 
@@ -207,7 +210,6 @@ function TreeMap(svg,data){
             })
             .style("stroke", "black")
             .style('stroke-width', 1)
-            // .on('click', function(){ console.log('clicked!') });
     }
 
     function name(d) {
@@ -230,9 +232,10 @@ function TreeMap(svg,data){
     
     function allCompInSector(d) {
         if (d.depth === 1) {
+            console.log('making compArr');
             let compArr = [];
-            for (let i = 0; i < d.parent.children.length; i++) {
-                compArr.push(d.parent.children[i].data.Symbol);
+            for (let i = 0; i < d.children.length; i++) {
+                compArr.push(d.children[i].data.Symbol);
             }
             return compArr;
         }

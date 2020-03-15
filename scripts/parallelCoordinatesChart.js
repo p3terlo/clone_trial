@@ -1,22 +1,24 @@
-// const AdvantageAPIkey = '1CM19T0YJXP6L6RL';
-// const FinnhubAPIkey = 'bpkhng7rh5rcgrlrac8g';
-// const IEXCloudkey = 'pk_082890e2408448e6a98d6eb27d0d86be'
-
-// set the dimensions and margins of the graph
+// Set the margins of the graph
 var margin = {top: 30, right: 50, bottom: 10, left: 100};
 
+// Empty list to format data as csv
 var sectordata = [];
 
+// Draw parallel coordinates graph
 function parallelCoordinatesChart(svg, companies, color) {
+	console.log('in parallelCoord, companies = ', companies);
 	var firstStock = null;
 	var secondStock = null;
 
+	// Highlight the companies that are selected
 	var highlight = function(color, firstStock, secondStock){
+		// Gray out all unselected companies
 		d3.select('.parallelCoordinatesChart').selectAll('path')
 			.transition().duration(200)
 			.style('stroke', '#636363')
 			.style('opacity', '0.2')
 
+		// Color first selected stock
 		if (firstStock) {
 		    d3.selectAll('.' + firstStock)
 		    	.transition().duration(200)
@@ -24,6 +26,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		    	.style('opacity', '1')
 		}
 
+		// Color second selected stock
 	    if (secondStock) {
 	    	d3.selectAll('.' + secondStock)
 		    	.transition().duration(200)
@@ -32,6 +35,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		    }
 	}
 
+	// Once two stocks are selected, unhighlight
 	var resetHighlight = function(color){
 		d3.selectAll('path')
 			.transition().duration(200).delay(1000)
@@ -39,6 +43,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 			.style('opacity', '1')
 	}
 
+	// Get data and format as csv
 	function apiCall(callback) {
 		var companyString = '';
 		for (let i=0 ; i<companies.length ; i++) {
@@ -61,6 +66,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		}
 		sectordata['columns'] = ['Stock', 'avgTotalVolume', 'marketCap', 'week52High', 'week52Low', 'changePercent', 'latestPrice', 'volume']
 
+		// TODO: optimize speed
 		var i = 0
 		call()
 		function call() {
@@ -73,6 +79,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		}
 	}
 
+	// Draw parallel coordinates
 	function draw(sectordata) {
 		d3.selectAll('.parallelCoordinatesChart > *').remove();
 
@@ -82,10 +89,11 @@ function parallelCoordinatesChart(svg, companies, color) {
 		  	.attr('transform',
 		  		'translate(' + margin.left + ',' + margin.top + ')');
 
+		// Define width and height
 		var width = d3.select('.parallelCoordinatesChart').node().getBoundingClientRect().width - margin.left - margin.right,
 		height = d3.select('.parallelCoordinatesChart').node().getBoundingClientRect().height - margin.top - margin.bottom;
 
-		// Choose axis based on checkboxes selected
+		// Choose axis to draw based on checkboxes selected
 		var dimensions = []
 		if (d3.select('#Average_Total_Volume').property('checked')) {
 			dimensions.push('avgTotalVolume')
@@ -121,7 +129,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 	  		.range([0, width])
 		  	.domain(dimensions);
 
-	  	// The path function take a row of the csv as input, and return x and y coordinates of the line to draw for this raw.
+	  	// Return x and y coordinates of the line to draw 
 	  	function path(d) {
 	  		return d3.line()(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
 	  	}
@@ -150,6 +158,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		    .text(function(d) { return d; })
 		    .style('fill', 'black')
 
+		// Tooltip and clicking functionality
 		this.update = function(data) {
 			this.updatePositions = function(selection) {
 				selection
@@ -171,20 +180,26 @@ function parallelCoordinatesChart(svg, companies, color) {
 						tooltip.style('display', 'none');
 					})
 					.on('click', function(datum) {
+						// Reset coloring if two selected
 						if ((!firstStock) && (!secondStock)) {
 							resetHighlight(color)
 						}
 
+						// Highlight first selected stock 
 						if (!firstStock) {
 							firstStock = datum.Stock
 							highlight(color, firstStock, secondStock)
+						// Highlight second selected stock if not the same stock
 						} else if ((!secondStock) && (firstStock != datum.Stock )) {
 							secondStock = datum.Stock
 							highlight(color, firstStock, secondStock)
 						}
 
+						// Draw difference chart if two stocks selected
 						if (firstStock && secondStock) {
 							DifferenceChart(d3.select('#differenceChart'), firstStock, secondStock);
+
+							// Reset selected stocks
 							firstStock = null;
 							secondStock = null;
 						}
