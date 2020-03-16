@@ -180,7 +180,32 @@ function TreeMap(svg,data){
                     selectedSectorColor = color(selectedSector)
                     parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), allCompInSector(d), selectedSectorColor)
                 } else if (d.depth === 2) {
-                    // Call candlestick here
+                    // Reset coloring if two selected
+                    if ((!firstStock) && (!secondStock)) {
+                        //d3.selectAll(".chosen").classed("chosen", false).style("stroke-width", 1).style("opacity", 0.3);
+                        resetHighlight(selectedSectorColor)
+                    }
+                
+                    // Highlight first selected stock
+                    if (!firstStock) {
+                        firstStock = compTicker(d)
+                        highlight(selectedSectorColor, firstStock, secondStock)
+                    // Highlight second selected stock if not the same stock
+                    } else if ((!secondStock) && (firstStock != compTicker(d) )) {
+                        secondStock = compTicker(d)
+                        highlight(selectedSectorColor, firstStock, secondStock)
+
+                        // Draw difference chart if two stocks selected
+                        if (firstStock && secondStock) {
+                            DifferenceChart(d3.select('#differenceChart'), firstStock, secondStock);
+
+                            // Reset selected stocks
+                            firstStock = null;
+                            secondStock = null;
+                        }
+                    }
+
+                    // Draw candlestick chart
                     drawChart(compTicker(d));
                 }
             })
