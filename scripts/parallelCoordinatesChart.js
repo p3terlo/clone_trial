@@ -259,7 +259,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 						highlight(color, firstStock, secondStock)
 							//hover
 							d3.select(this).classed("chosen", true);
-						}
+					}
 
 						// Draw difference chart if two stocks selected
 						if (firstStock && secondStock) {

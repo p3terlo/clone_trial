@@ -14,7 +14,7 @@ function TreeMap(svg,data){
     let x = d3.scaleLinear().domain([0,width]).range([0,width]);
     let y = d3.scaleLinear().domain([0,height]).range([0,height]);
 
-    let add3Colors = ["#EE6B7C", "#3CD4FA", "#80E111"];
+    let add3Colors = ["#80E111", "#3CD4FA", "#EE6B7C"];
     let color = d3.scaleOrdinal()
         .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
         .range(d3.schemeDark2.concat(add3Colors));
@@ -171,6 +171,8 @@ function TreeMap(svg,data){
                 //delete data from bottom of parallel coords
                 d3.selectAll(".companyData").remove();
 
+                if (!d3.select("."+compTicker(d)).classed("chosen"))
+    							d3.select("."+compTicker(d)).style("stroke-width", 1).style("opacity", 0.3);
             })
             // Clicking a sector passes its company to parallel coordinates and clicking a company passes its ticker (symbol) to candlestick
             .on('click', function(d) {
@@ -182,27 +184,29 @@ function TreeMap(svg,data){
                 } else if (d.depth === 2) {
                     // Reset coloring if two selected
                     if ((!firstStock) && (!secondStock)) {
-                        //d3.selectAll(".chosen").classed("chosen", false).style("stroke-width", 1).style("opacity", 0.3);
+                        d3.selectAll(".chosen").classed("chosen", false).style("stroke-width", 1).style("opacity", 0.3);
                         resetHighlight(selectedSectorColor)
                     }
-                
+
                     // Highlight first selected stock
                     if (!firstStock) {
                         firstStock = compTicker(d)
                         highlight(selectedSectorColor, firstStock, secondStock)
+                        d3.select("."+compTicker(d)).classed("chosen", true);
                     // Highlight second selected stock if not the same stock
                     } else if ((!secondStock) && (firstStock != compTicker(d) )) {
                         secondStock = compTicker(d)
                         highlight(selectedSectorColor, firstStock, secondStock)
+                        d3.select("."+compTicker(d)).classed("chosen", true);
+                    }
 
-                        // Draw difference chart if two stocks selected
-                        if (firstStock && secondStock) {
-                            DifferenceChart(d3.select('#differenceChart'), firstStock, secondStock);
+                    // Draw difference chart if two stocks selected
+                    if (firstStock && secondStock) {
+                        DifferenceChart(d3.select('#differenceChart'), firstStock, secondStock);
 
-                            // Reset selected stocks
-                            firstStock = null;
-                            secondStock = null;
-                        }
+                        // Reset selected stocks
+                        firstStock = null;
+                        secondStock = null;
                     }
 
                     // Draw candlestick chart
