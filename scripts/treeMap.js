@@ -14,10 +14,10 @@ function TreeMap(svg,data){
     let x = d3.scaleLinear().domain([0,width]).range([0,width]);
     let y = d3.scaleLinear().domain([0,height]).range([0,height]);
 
-
+    let add3Colors = ["#EE6B7C", "#3CD4FA", "#80E111"];
     let color = d3.scaleOrdinal()
         .domain(['Industrials','Health Care','Information Technology','Consumer Discretionary','Utilities','Financials','Materials','Real Estate','Consumer Staples','Energy','Telecommunication Services'])
-        .range(d3.schemeDark2);
+        .range(d3.schemeDark2.concat(add3Colors));
 
     let myGroup = svg
         .attr('width', width)
