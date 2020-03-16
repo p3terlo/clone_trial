@@ -178,8 +178,6 @@ function parallelCoordinatesChart(svg, companies, color) {
 				selection
 				.on('mouseover', function(datum) {
 					//hover
-					console.log(d3.select(this));
-					console.log(d3.select("." + datum.Stock).data());
 					d3.select(this).style("stroke-width", 5).style("opacity", 1);
 
 					//add data at bottom of parallel cords
