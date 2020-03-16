@@ -4,8 +4,15 @@ var margin = {top: 30, right: 50, bottom: 40, left: 100};
 // Empty list to format data as csv
 var sectordata = [];
 
+// global variables for drawChart function when called via hovering over company in treemap
+var dimensions = [];
+var x;
+var height;
+
 // Draw parallel coordinates graph
 function parallelCoordinatesChart(svg, companies, color) {
+	sectordata = [];
+
 	var firstStock = null;
 	var secondStock = null;
 
@@ -94,11 +101,11 @@ function parallelCoordinatesChart(svg, companies, color) {
 			'translate(' + margin.left + ',' + margin.top + ')');
 
 		// Define width and height
-		var width = d3.select('.parallelCoordinatesChart').node().getBoundingClientRect().width - margin.left - margin.right,
+		var width = d3.select('.parallelCoordinatesChart').node().getBoundingClientRect().width - margin.left - margin.right;
 		height = d3.select('.parallelCoordinatesChart').node().getBoundingClientRect().height - margin.top - margin.bottom;
 
 		// Choose axis to draw based on checkboxes selected
-		var dimensions = []
+		dimensions = []
 		if (d3.select('#Average_Total_Volume').property('checked')) {
 			dimensions.push('Avg Total Volume')
 		}
@@ -171,8 +178,11 @@ function parallelCoordinatesChart(svg, companies, color) {
 				selection
 				.on('mouseover', function(datum) {
 					//hover
+					console.log(d3.select(this));
+					console.log(d3.select("." + datum.Stock).data());
 					d3.select(this).style("stroke-width", 5).style("opacity", 1);
 
+					//add data at bottom of parallel cords
 					svg.selectAll(".companyData")
 						.data(dimensions)
 						.enter()
@@ -220,6 +230,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 						if (!d3.select(this).classed("chosen"))
 							d3.select(this).style("stroke-width", 1).style("opacity", 0.3);
 
+						//delete data at bottom of parallel coords
 						d3.selectAll(".companyData").remove();
 
 						//same tooltip as other charts
@@ -269,4 +280,21 @@ function parallelCoordinatesChart(svg, companies, color) {
 	}
 
 	apiCall(draw)
+}
+
+function writeData(datum) {
+	d3.select(".parallelCoordinatesChart").select("g").selectAll(".companyData")
+		.data(dimensions)
+		.enter()
+		.append("g")
+		.classed("companyData", true)
+		.attr("transform", function(d) { return "translate(" + x(d) + "," + (margin.top+height) +")"; })
+		.append("text")
+		.style("text-anchor", "middle")
+		.text(function(d) {
+			if (d=="Avg Total Volume" || d=="Volume" || d=="Market Cap")
+				return numToWords(datum[d]);
+			return datum[d];
+		})
+		.style("fill", "black");
 }

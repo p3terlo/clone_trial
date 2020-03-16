@@ -137,6 +137,11 @@ function TreeMap(svg,data){
                     d3.selectAll('.' + d.data['Symbol'] + '1').style("stroke-width", 3).style("opacity", 0.5);
                     // Highlight corresponding line in parallel coordinates
                     d3.select("." + d.data["Symbol"]).style("stroke-width", 5).style("opacity", 1);
+
+                    //add data to bottom of parallel coords
+                    if(d3.select("." + d.data["Symbol"]).data().length != 0) {
+                        writeData(d3.select("." + d.data["Symbol"]).data()[0])
+                    }
                 }
             })
             .on("mousemove", function(d) {
@@ -162,6 +167,9 @@ function TreeMap(svg,data){
             						d3.select("." + d.data["Symbol"]).style("stroke-width", 1).style("opacity", 0.3);
                     } catch(e){}
                 }
+
+                //delete data from bottom of parallel coords
+                d3.selectAll(".companyData").remove();
 
             })
             // Clicking a sector passes its company to parallel coordinates and clicking a company passes its ticker (symbol) to candlestick
