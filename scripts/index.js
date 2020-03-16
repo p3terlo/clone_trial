@@ -47,3 +47,26 @@ function nestData(data, sortedKeys){
 
     return nestedData;
 }
+
+function numToWords (labelValue) {
+
+    // Nine Zeroes for Billions
+    return Math.abs(Number(labelValue)) >= 1.0e+12
+
+    ? parseFloat(parseFloat(Math.abs(Number(labelValue)) / 1.0e+12).toFixed(2)) + " Trillion"
+    // Six Zeroes for Millions
+    : Math.abs(Number(labelValue)) >= 1.0e+9
+
+    ? parseFloat(parseFloat(Math.abs(Number(labelValue)) / 1.0e+9).toFixed(2)) + " Billion"
+    // Three Zeroes for Thousands
+    : Math.abs(Number(labelValue)) >= 1.0e+6
+
+    ? parseFloat(parseFloat(Math.abs(Number(labelValue)) / 1.0e+6).toFixed(2)) + " Million"
+
+    : Math.abs(Number(labelValue)) >= 1.0e+3
+
+    ? parseFloat(parseFloat(Math.abs(Number(labelValue)) / 1.0e+3).toFixed(2)) + " Thousand"
+
+    : Math.abs(Number(labelValue));
+
+}

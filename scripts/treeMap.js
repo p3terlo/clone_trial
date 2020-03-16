@@ -119,20 +119,18 @@ function TreeMap(svg,data){
                         .attr("x", xPosition)
                         .attr("y", yPosition)
                         .select("#CompName")
-                        .text(d.data['Name'])
-                        .select("#MarketCap")
-                        .text(d.data["Market Cap"]);
-                    d3.select("#MarketCap").text("Market Cap : $" + d.data["Market Cap"]);
+                        .text(d.data['Name']);
+                    d3.select("#MarketCap").text("Market Cap : $" + numToWords(d.data["Market Cap"]));
                     d3.select("#tooltip").classed("hidden", false);
 
                     // Doesn't work for some reason
-                    d3.select(this).style('stroke-width', 5);
+                    d3.select("." + d.data["Symbol"]).style("stroke-width", 5).style("opacity", 1);
                 }
             })
             .on("mousemove", function(d) {
                 var xPosition = d3.event.pageX;
                 var yPosition = d3.event.pageY;
-      
+
                 d3.select("#tooltip")
                   .style("left", xPosition + "px")
                   .style("top", yPosition + "px")
@@ -141,6 +139,14 @@ function TreeMap(svg,data){
                 d3.select("#CompName").text("");
                 d3.select("#MarketCap").text("");
                 d3.select("#tooltip").classed("hidden", true);
+
+                if(d.depth===2) {
+                    try{
+                      if (!d3.select("." + d.data["Symbol"]).classed("chosen"))
+            						d3.select("." + d.data["Symbol"]).style("stroke-width", 1).style("opacity", 0.3);
+                    } catch(e){}
+                }
+
             })
             // Clicking a sector passes its company to parallel coordinates and clicking a company passes its ticker (symbol) to candlestick
             .on('click', function(d) {
@@ -163,7 +169,7 @@ function TreeMap(svg,data){
                 }
             })
             .attr("class", "textdiv")
-            
+
 
         function transition(d) {
             transitioning = true;
@@ -196,7 +202,7 @@ function TreeMap(svg,data){
             t1.selectAll(".foreignobj").call(foreign);
             t2.selectAll(".textdiv").style("display", "block");
             t2.selectAll(".foreignobj").call(foreign);
-            
+
             // Remove the old node when the transition is finished.
             t1.on("end.remove", function(){
                 this.remove();

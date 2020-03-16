@@ -181,7 +181,11 @@ function parallelCoordinatesChart(svg, companies, color) {
 						.attr("transform", function(d) { return "translate(" + x(d) + "," + (margin.top+height) +")"; })
 						.append("text")
 						.style("text-anchor", "middle")
-						.text(function(d) { return datum[d]; })
+						.text(function(d) {
+							if (d=="Avg Total Volume" || d=="Volume" || d=="Market Cap")
+								return numToWords(datum[d]);
+							return datum[d];
+						})
 						.style("fill", "black");
 
 						//same tooltip as other charts
