@@ -1,4 +1,6 @@
 function TreeMap(svg,data){
+    let currentCompanies = [];
+
     // console.log('treemap data = ', data);
     // Variable to keep track of which sector is selected
     var selectedSector = null;
@@ -58,6 +60,7 @@ function TreeMap(svg,data){
     for (let i = 0; i < data.children[2].children.length; i++) {
          startupCompanyArray.push(data.children[2].children[i].Symbol);
     }
+    currentCompanies = startupCompanyArray
     parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), startupCompanyArray, selectedSectorColor)
 
     function display(d) {
@@ -259,6 +262,11 @@ function TreeMap(svg,data){
             });
         }
 
+        // Function to redraw parallel coordinates chart on click to update button
+        document.getElementById("Update").onclick = function (d) { 
+            parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), currentCompanies, selectedSectorColor)
+        };
+
         return g;
     }
 
@@ -342,8 +350,10 @@ function TreeMap(svg,data){
             for (let i = 0; i < d.children.length; i++) {
                 compArr.push(d.children[i].data.Symbol);
             }
+            currentCompanies = compArr
             return compArr;
         }
+        console.log(d)
     }
 
     function compTicker(d) {
