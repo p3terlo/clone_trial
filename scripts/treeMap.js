@@ -1,5 +1,5 @@
 function TreeMap(svg,data){
-    console.log('treemap data = ', data);
+    // console.log('treemap data = ', data);
     // Variable to keep track of which sector is selected
     var selectedSector = null;
     var selectedSectorColor = null;
@@ -103,7 +103,6 @@ function TreeMap(svg,data){
                 return d.data.name;
             })
 
-        // Adds titles
         g.append("foreignObject")
             .call(rect)
             .attr("class", "foreignobj")
@@ -134,7 +133,9 @@ function TreeMap(svg,data){
                     d3.select("#MarketCap").text("Market Cap: $" + numToWords(d.data["Market Cap"]));
                     d3.select("#tooltip").classed("hidden", false);
 
-                    // Doesn't work for some reason
+                    // console.log(d);
+                    d3.selectAll('.' + d.data['Symbol'] + '1').style("stroke-width", 3).style("opacity", 0.5);
+                    // Highlight corresponding line in parallel coordinates
                     d3.select("." + d.data["Symbol"]).style("stroke-width", 5).style("opacity", 1);
                 }
             })
@@ -152,6 +153,8 @@ function TreeMap(svg,data){
                 d3.select("#SectorName").text("");
                 d3.select("#TotalMarketCap").text("");
                 d3.select("#tooltip").classed("hidden", true);
+
+                d3.selectAll('.' + d.data['Symbol'] + '1').style("stroke-width", 1).style("opacity", 1);
 
                 if(d.depth===2) {
                     try{
