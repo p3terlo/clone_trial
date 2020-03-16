@@ -87,7 +87,6 @@ function TreeMap(svg,data){
             .classed("children", true)
             .on("click", transition)
 
-
         g.selectAll(".child")
             .data(function (d) {
                 return d.children || [d];
@@ -110,6 +109,18 @@ function TreeMap(svg,data){
             .attr("class", "foreignobj")
             // On hover, show tooltip with company name and its market cap
             .on('mouseover', function(d){
+                if (d.depth === 1) {
+                    var xPosition = d3.event.pageX;
+                    var yPosition = d3.event.pageY;
+
+                    d3.select("#tooltip")
+                        .attr("x", xPosition)
+                        .attr("y", yPosition)
+                        .select("#SectorName")
+                        .text(d.data.name)
+                    d3.select("#TotalMarketCap").text("Market Cap : $" + marketCapPerSector(d));
+                    d3.select("#tooltip").classed("hidden", false);
+                }
                 if (d.depth === 2) {
                     // console.log(d3.select(this));
                     var xPosition = d3.event.pageX;
@@ -120,8 +131,6 @@ function TreeMap(svg,data){
                         .attr("y", yPosition)
                         .select("#CompName")
                         .text(d.data['Name'])
-                        .select("#MarketCap")
-                        .text(d.data["Market Cap"]);
                     d3.select("#MarketCap").text("Market Cap : $" + d.data["Market Cap"]);
                     d3.select("#tooltip").classed("hidden", false);
 
@@ -140,6 +149,8 @@ function TreeMap(svg,data){
              .on("mouseout", function(d) {
                 d3.select("#CompName").text("");
                 d3.select("#MarketCap").text("");
+                d3.select("#SectorName").text("");
+                d3.select("#TotalMarketCap").text("");
                 d3.select("#tooltip").classed("hidden", true);
             })
             // Clicking a sector passes its company to parallel coordinates and clicking a company passes its ticker (symbol) to candlestick
@@ -196,7 +207,7 @@ function TreeMap(svg,data){
             t1.selectAll(".foreignobj").call(foreign);
             t2.selectAll(".textdiv").style("display", "block");
             t2.selectAll(".foreignobj").call(foreign);
-            
+
             // Remove the old node when the transition is finished.
             t1.on("end.remove", function(){
                 this.remove();
@@ -289,5 +300,13 @@ function TreeMap(svg,data){
         if (d.depth === 2) {
             return d.data['Symbol'];
         }
+    }
+
+    function marketCapPerSector(d) {
+        let totalMarketCap = 0;
+        for (let i = 0; i < d.children.length; i++) {
+            totalMarketCap += +d.children[i].data["Market Cap"];
+        }
+        return totalMarketCap;
     }
 }
