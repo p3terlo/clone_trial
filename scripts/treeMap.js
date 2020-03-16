@@ -118,7 +118,7 @@ function TreeMap(svg,data){
                         .attr("y", yPosition)
                         .select("#SectorName")
                         .text(d.data.name)
-                    d3.select("#TotalMarketCap").text("Market Cap : $" + numToWords(marketCapPerSector(d)));
+                    d3.select("#TotalMarketCap").text("Market Cap: $" + numToWords(marketCapPerSector(d)));
                     d3.select("#tooltip").classed("hidden", false);
                 }
                 if (d.depth === 2) {
@@ -130,8 +130,8 @@ function TreeMap(svg,data){
                         .attr("x", xPosition)
                         .attr("y", yPosition)
                         .select("#CompName")
-                        .text(d.data['Name']);
-                    d3.select("#MarketCap").text("Market Cap : $" + numToWords(d.data["Market Cap"]));
+                        .text(d.data.Symbol + ": " +d.data["Name"]);
+                    d3.select("#MarketCap").text("Market Cap: $" + numToWords(d.data["Market Cap"]));
                     d3.select("#tooltip").classed("hidden", false);
 
                     // Doesn't work for some reason
@@ -274,6 +274,12 @@ function TreeMap(svg,data){
             })
             .style("stroke", "black")
             .style('stroke-width', 1)
+            .attr("class", function(d) {
+                if (d.depth===2) {
+                  return d.data.Symbol+"1";
+                }
+                return "parent";
+            })
     }
 
     function name(d) {

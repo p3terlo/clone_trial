@@ -199,9 +199,12 @@ function parallelCoordinatesChart(svg, companies, color) {
 						d3.select("#Stock").text(datum.Stock + ": " + datum.companyName);
 						d3.select("#Exchange").text(datum.exchange);
 
-	        		//Show the tooltip
-	        		d3.select("#tooltip").classed("hidden", false);
-	      		})
+	        	//Show the tooltip
+	        	d3.select("#tooltip").classed("hidden", false);
+
+						// highlight stock in treemap
+						d3.selectAll("."+datum.Stock+"1").style("stroke-width", 3).style("opacity", 0.5);
+	      })
 				.on('mousemove', function(datum) {
 						//same tooltip as other charts
 						var xPosition = d3.event.pageX;
@@ -222,6 +225,9 @@ function parallelCoordinatesChart(svg, companies, color) {
 						d3.select("#Stock").text("");
 						d3.select("#Exchange").text("");
 						d3.select("#tooltip").classed("hidden", true);
+
+						//unhighlight stock in treemap
+						d3.selectAll("."+datum.Stock+"1").style("stroke-width", 1).style("opacity", 1);
 				})
 				.on('click', function(datum) {
 						// Reset coloring if two selected
