@@ -9,47 +9,48 @@ var dimensions = [];
 var x;
 var height;
 
-// Draw parallel coordinates graph
-function parallelCoordinatesChart(svg, companies, color) {
-	sectordata = [];
+// Global selected stocks, initially null
+var firstStock = null;
+var secondStock = null;
 
-	var firstStock = null;
-	var secondStock = null;
-
-	// Highlight the companies that are selected
-	var highlight = function(color, firstStock, secondStock){
-		// Gray out all unselected companies
-		d3.select('.parallelCoordinatesChart').selectAll('path')
+// Highlight the companies that are selected
+var highlight = function(color, firstStock, secondStock){
+	// Gray out all unselected companies
+	d3.select('.parallelCoordinatesChart').selectAll('path')
 		.transition().duration(200)
 		.style('stroke', '#636363')
 		.style('opacity', '0.3')
 
-		// Color first selected stock
-		if (firstStock) {
-			d3.selectAll('.' + firstStock)
+	// Color first selected stock
+	if (firstStock) {
+		d3.select('.parallelCoordinatesChart').selectAll('.' + firstStock)
 			.transition().duration(200)
 			.style('stroke', color)
 			.style('opacity', '1')
 			.style('line-weight', 5);
-		}
-
-		// Color second selected stock
-		if (secondStock) {
-			d3.selectAll('.' + secondStock)
-			.transition().duration(200)
-			.style('stroke', color)
-			.style('opacity', '1')
-			.style('line-weight', 5);
-		}
 	}
 
-	// Once two stocks are selected, unhighlight
-	var resetHighlight = function(color){
-		d3.select('.parallelCoordinatesChart').selectAll('path')
-		.transition().duration(200).delay(1000)
+	// Color second selected stock
+	if (secondStock) {
+		d3.select('.parallelCoordinatesChart').selectAll('.' + secondStock)
+		.transition().duration(200)
 		.style('stroke', color)
 		.style('opacity', '1')
+		.style('line-weight', 5);
 	}
+}
+
+// Once two stocks are selected, unhighlight
+var resetHighlight = function(color) {
+	d3.select('.parallelCoordinatesChart').selectAll('path')
+	.transition().duration(200).delay(1000)
+	.style('stroke', color)
+	.style('opacity', '1')
+}
+
+// Draw parallel coordinates graph
+function parallelCoordinatesChart(svg, companies, color) {
+	sectordata = [];
 
 	// Get data and format as csv
 	function apiCall(callback) {
@@ -83,7 +84,6 @@ function parallelCoordinatesChart(svg, companies, color) {
 			if ((sectordata.length == companies.length) || (i > 2)) {
 				draw(sectordata)
 			} else {
-				console.log('waiting')
 				i = i+1
 				setTimeout(call, 400)
 			}
@@ -150,27 +150,27 @@ function parallelCoordinatesChart(svg, companies, color) {
 
 		// Draw the lines
 		svg.selectAll('myPath')
-		.append('g')
-		.data(sectordata)
-		.enter().append('path')
-		.attr('class', function(d) { return d.Stock})
-		.attr('d', path)
-		.style('fill', 'none')
-		.style('stroke', color)
-		.style('opacity', 0.3)
+			.append('g')
+			.data(sectordata)
+			.enter().append('path')
+			.attr('class', function(d) { return d.Stock})
+			.attr('d', path)
+			.style('fill', 'none')
+			.style('stroke', color)
+			.style('opacity', 0.3)
 
 	  	// Draw the axis
 	  	svg.selectAll('myAxis')
-	  	.data(dimensions).enter()
-	  	.append('g')
-	  	.attr('class', 'axis')
-	  	.attr('transform', function(d) { return 'translate(' + x(d) + ')'; })
-	  	.each(function(d) { d3.select(this).call(d3.axisLeft().ticks(5).scale(y[d])); })
-	  	.append('text')
-	  	.style('text-anchor', 'middle')
-	  	.attr('y', -9)
-	  	.text(function(d) { return d; })
-	  	.style('fill', 'black')
+		  	.data(dimensions).enter()
+		  	.append('g')
+		  	.attr('class', 'axis')
+		  	.attr('transform', function(d) { return 'translate(' + x(d) + ')'; })
+		  	.each(function(d) { d3.select(this).call(d3.axisLeft().ticks(5).scale(y[d])); })
+		  	.append('text')
+		  	.style('text-anchor', 'middle')
+		  	.attr('y', -9)
+		  	.text(function(d) { return d; })
+		  	.style('fill', 'black')
 
 		// Tooltip and clicking functionality
 		this.update = function(data) {
@@ -240,20 +240,20 @@ function parallelCoordinatesChart(svg, companies, color) {
 						d3.selectAll("."+datum.Stock+"1").style("stroke-width", 1).style("opacity", 1);
 				})
 				.on('click', function(datum) {
-						// Reset coloring if two selected
-						if ((!firstStock) && (!secondStock)) {
-							//hover
-							d3.selectAll(".chosen").classed("chosen", false).style("stroke-width", 1).style("opacity", 0.3);
-							resetHighlight(color)
-						}
+					// Reset coloring if two selected
+					if ((!firstStock) && (!secondStock)) {
+						//hover
+						d3.selectAll(".chosen").classed("chosen", false).style("stroke-width", 1).style("opacity", 0.3);
+						resetHighlight(color)
+					}
 
-						// Highlight first selected stock
-						if (!firstStock) {
-							firstStock = datum.Stock
-							highlight(color, firstStock, secondStock)
-							//hover
-							d3.select(this).classed("chosen", true);
-						// Highlight second selected stock if not the same stock
+					// Highlight first selected stock
+					if (!firstStock) {
+						firstStock = datum.Stock
+						highlight(color, firstStock, secondStock)
+						//hover
+						d3.select(this).classed("chosen", true);
+					// Highlight second selected stock if not the same stock
 					} else if ((!secondStock) && (firstStock != datum.Stock )) {
 						secondStock = datum.Stock
 						highlight(color, firstStock, secondStock)
