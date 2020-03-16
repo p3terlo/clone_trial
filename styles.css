@@ -226,6 +226,6 @@ rect.parent,
   color: white
 }
 
-#Date, #Stock, #CompName {
+#Date, #Stock, #CompName, #SectorName {
   font-weight: bold;
 }

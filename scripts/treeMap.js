@@ -87,7 +87,6 @@ function TreeMap(svg,data){
             .classed("children", true)
             .on("click", transition)
 
-
         g.selectAll(".child")
             .data(function (d) {
                 return d.children || [d];
@@ -110,6 +109,18 @@ function TreeMap(svg,data){
             .attr("class", "foreignobj")
             // On hover, show tooltip with company name and its market cap
             .on('mouseover', function(d){
+                if (d.depth === 1) {
+                    var xPosition = d3.event.pageX;
+                    var yPosition = d3.event.pageY;
+
+                    d3.select("#tooltip")
+                        .attr("x", xPosition)
+                        .attr("y", yPosition)
+                        .select("#SectorName")
+                        .text(d.data.name)
+                    d3.select("#TotalMarketCap").text("Market Cap : $" + numToWords(marketCapPerSector(d)));
+                    d3.select("#tooltip").classed("hidden", false);
+                }
                 if (d.depth === 2) {
                     // console.log(d3.select(this));
                     var xPosition = d3.event.pageX;
@@ -138,6 +149,8 @@ function TreeMap(svg,data){
              .on("mouseout", function(d) {
                 d3.select("#CompName").text("");
                 d3.select("#MarketCap").text("");
+                d3.select("#SectorName").text("");
+                d3.select("#TotalMarketCap").text("");
                 d3.select("#tooltip").classed("hidden", true);
 
                 if(d.depth===2) {
@@ -295,5 +308,13 @@ function TreeMap(svg,data){
         if (d.depth === 2) {
             return d.data['Symbol'];
         }
+    }
+
+    function marketCapPerSector(d) {
+        let totalMarketCap = 0;
+        for (let i = 0; i < d.children.length; i++) {
+            totalMarketCap += +d.children[i].data["Market Cap"];
+        }
+        return totalMarketCap;
     }
 }
