@@ -253,6 +253,21 @@ function parallelCoordinatesChart(svg, companies, color) {
 						highlight(color, firstStock, secondStock)
 						//hover
 						d3.select(this).classed("chosen", true);
+
+						d3.selectAll('#DifferenceChart > *').remove();
+
+						var tempSVG = d3.select('#DifferenceChart');
+
+						var widthD = tempSVG.node().getBoundingClientRect().width,
+						heightD = tempSVG.node().getBoundingClientRect().height;
+
+						tempSVG.append("text")
+								.attr("x", widthD/2)
+								.attr("y", heightD/2)
+								.attr("text-anchor", "middle")
+								.style("font-weight", "bold")
+								.style("font-size", "25px")
+								.text("First Stock Selected: " + firstStock);
 					// Highlight second selected stock if not the same stock
 					} else if ((!secondStock) && (firstStock != datum.Stock )) {
 						secondStock = datum.Stock

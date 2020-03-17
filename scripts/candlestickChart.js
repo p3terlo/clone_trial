@@ -9,7 +9,7 @@ function drawChart(ticker) {
 
   d3.selectAll("#candlestickChart > *").remove();
 
-	d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker+"&apikey="+apiKey1, function(data) {
+	d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker+"&apikey="+nextKey(), function(data) {
 
     var prices = [];
 

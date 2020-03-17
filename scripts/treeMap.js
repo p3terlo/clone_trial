@@ -196,6 +196,21 @@ function TreeMap(svg,data){
                         firstStock = compTicker(d)
                         highlight(selectedSectorColor, firstStock, secondStock)
                         d3.select("."+compTicker(d)).classed("chosen", true);
+
+                        d3.selectAll('#DifferenceChart > *').remove();
+
+                        var tempSVG = d3.select('#DifferenceChart');
+
+                        var widthD = tempSVG.node().getBoundingClientRect().width,
+                        heightD = tempSVG.node().getBoundingClientRect().height;
+
+                        tempSVG.append("text")
+                            .attr("x", widthD/2)
+                            .attr("y", heightD/2)
+                            .attr("text-anchor", "middle")
+                            .style("font-weight", "bold")
+                            .style("font-size", "25px")
+                            .text("First Stock Selected: " + firstStock);
                     // Highlight second selected stock if not the same stock
                     } else if ((!secondStock) && (firstStock != compTicker(d) )) {
                         secondStock = compTicker(d)
@@ -267,7 +282,7 @@ function TreeMap(svg,data){
         }
 
         // Function to redraw parallel coordinates chart on click to update button
-        document.getElementById("Update").onclick = function (d) { 
+        document.getElementById("Update").onclick = function (d) {
             parallelCoordinatesChart(d3.select('.parallelCoordinatesChart'), currentCompanies, selectedSectorColor)
         };
 

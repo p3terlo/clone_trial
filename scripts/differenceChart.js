@@ -2,12 +2,25 @@
 const apiKey1 = "R1TE9XCC432MADLL";
 const apiKey2 = "EE6IYPIJGJ2YHO3N";
 const apiKey3 = "1CM19T0YJXP6L6RL";
+const apiKey4 = "LZWQ8ET0ZF40LYK0";
+const apiKey5 = "M7S0HVJYZ5XN4SZY";
+const apiKey6 = "7JB741JEP639NNSA";
+const apiKey7 = "BPZ7XJLFCQFXP5HI";
+const apiKey8 = "WYL1SI8AD1OQV75B";
+const keys = [apiKey1, apiKey2, apiKey3, apiKey4, apiKey5, apiKey6, apiKey7, apiKey8];
+var keyIdx = 0;
 var data = {};
 var differenceArray = [];
 var percentages = [];
 var expandedPercentages = [];
 var datesD = [];
 const numDates = 100;
+
+function nextKey() {
+    keyIdx = (keyIdx+1) % keys.length;
+    console.log(keyIdx);
+    return keys[keyIdx];
+}
 
 function DifferenceChart(svg, ticker1, ticker2) {
 
@@ -56,8 +69,8 @@ function DifferenceChart(svg, ticker1, ticker2) {
   .attr("transform", "translate(" + marginD.left + "," + marginD.top + ")");
 
   // get ticker data
-  d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker1+"&apikey="+apiKey2, function(data1) {
-    d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker2+"&apikey="+apiKey3, function(data2) {
+  d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker1+"&apikey="+nextKey(), function(data1) {
+    d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=full&symbol="+ticker2+"&apikey="+nextKey(), function(data2) {
 
       svg.append("text")
         .attr("x", width/2)
