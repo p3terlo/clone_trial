@@ -57,7 +57,7 @@ function parallelCoordinatesChart(svg, companies, color) {
 		var companyString = '';
 		for (let i=0 ; i<companies.length ; i++) {
 			try {
-				d3.json('https://cloud.iexapis.com/stable/stock/' + companies[i] + '/book?token=pk_35dd1844f0ed4482a98158403e6d4900', function(stock) {
+				d3.json('https://cloud.iexapis.com/stable/stock/' + companies[i] + '/book?token=pk_da2b797633be4f42a62688e681f0897b', function(stock) {
 					let row = {};
 					row['Stock'] = companies[i]
 					row['Avg Total Volume'] = stock['quote']['avgTotalVolume']
