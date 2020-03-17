@@ -240,6 +240,8 @@ function parallelCoordinatesChart(svg, companies, color) {
 						d3.selectAll("."+datum.Stock+"1").style("stroke-width", 1).style("opacity", 1);
 				})
 				.on('click', function(datum) {
+					drawChart(datum.Stock);
+
 					// Reset coloring if two selected
 					if ((!firstStock) && (!secondStock)) {
 						//hover

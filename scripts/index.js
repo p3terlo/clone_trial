@@ -17,8 +17,8 @@ d3.csv('./data/constituents-financials.csv', function(d) {
 
     let treeMap = new TreeMap(d3.select('.treeMap'), nestedCompanyBySector);
 
-    let differenceChart = new DifferenceChart(d3.select("#differenceChart"), "TSLA", "AAPL");
-    drawChart("TSLA");
+    let differenceChart = new DifferenceChart(d3.select("#differenceChart"), "AAPL", "GOOG");
+    drawChart("AAPL");
 
 })
 

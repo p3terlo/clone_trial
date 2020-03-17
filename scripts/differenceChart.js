@@ -18,7 +18,6 @@ const numDates = 100;
 
 function nextKey() {
     keyIdx = (keyIdx+1) % keys.length;
-    console.log(keyIdx);
     return keys[keyIdx];
 }
 
